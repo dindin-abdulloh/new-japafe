@@ -11,7 +11,49 @@ export const getSupplier = createAsyncThunk(
     const results = await axios.get(`supplier?limit=${perPage}&page=${page}`, {
       headers: headers
     })
-    console.log('jalan')
+    return results.data
+  }
+)
+
+export const getProvince = createAsyncThunk(
+  'supplierSlice/getProvince',
+  async ({token = ''}) => {
+    const headers = {
+      'Content-Type': 'application/json',
+      Authorization: 'Bearer ' + token
+    }
+    const results = await axios.get(`address/prov`, {
+      headers: headers
+    })
+    return results.data
+  }
+)
+
+export const getDataCity = createAsyncThunk(
+  'supplierSlice/getDataCity',
+  async({id = null, token = ''}) => {
+    const headers = {
+      'Content-Type': 'application/json',
+      Authorization: 'Bearer ' + token
+    }
+    const results = await axios.get(`address/city/${id}`, {
+      headers: headers
+    })
+    
+    return results.data
+  }
+)
+
+export const getDataDistrict = createAsyncThunk(
+  'supplierSlice/getDataDistrict',
+  async({id = null, token = ''}) => {
+    const headers = {
+      'Content-Type': 'application/json',
+      Authorization: 'Bearer ' + token
+    }
+    const results = await axios.get(`/address/dis/4`, {
+      headers: headers
+    })
     return results.data
   }
 )
@@ -99,6 +141,20 @@ const initialState = {
     success: false,
     massage: '',
     isLoading: false
+  },
+  dataProvince: {
+    data : [],
+    isLoading: false
+  },
+
+  dataCity: {
+    data : [],
+    isLoading : false
+  },
+
+  dataDistrict : {
+    data : [],
+    isLoading : false
   }
 }
 
@@ -110,6 +166,7 @@ const supplierSlice = createSlice({
       state.resSupplier.success = action.payload
     }
   },
+
   extraReducers: {
     [getSupplier.pending]: state => {
       state.dataSupplier.isLoading = true
@@ -126,6 +183,54 @@ const supplierSlice = createSlice({
     },
     [getSupplier.rejected]: state => {
       state.dataSupplier.isLoading = false
+    },
+
+    // get Province
+    [getProvince.pending] : state => {
+      state.dataProvince.isLoading = true
+    },
+    [getProvince.fulfilled] : (state, action) => {
+      state.dataProvince = {
+        ...state.dataProvince,
+        data : action.payload.msg,
+        isLoading: false
+      }
+    },
+    [getProvince.rejected]: state => {
+      state.dataProvince.isLoading = false
+    },
+
+    // get City
+    [getDataCity.pending] : state => {
+      state.dataCity.isLoading = true
+    },
+
+    [getDataCity.fulfilled] : (state, action) => {
+      state.dataCity = {
+        ...state.dataCity,
+        data : action.payload.msg,
+        isLoading : false
+      }
+    },
+
+    [getDataCity.rejected] : state => {
+      state.dataCity.isLoading = false
+    },
+
+    // get District
+    [getDataDistrict.pending] : state => {
+      state.dataDistrict.isLoading = true
+    },
+
+    [getDataDistrict.fulfilled] : (state, action) => {
+      state.dataDistrict = {
+        ...state.dataDistrict,
+        data : action.payload.msg
+      }
+    },
+
+    [getDataDistrict.rejected] : state => {
+      state.dataDistrict.isLoading = false
     },
 
     // addSupplier

@@ -1,0 +1,33 @@
+.css-19kzrtu {
+    padding: 0px !important;
+  }
+  
+  .react-tel-input .form-control {
+    position: relative;
+    font-size: 14px;
+    letter-spacing: .01rem;
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+    padding-left: 48px;
+    margin-left: 0;
+    background: #FFFFFF;
+    border: 1px solid #CACACA;
+    border-radius: 5px;
+    line-height: 25px;
+    height: 35px;
+    width: 100% !important;
+    outline: none;
+  }
+  
+  .modal_add_button {
+    @apply tw-w-[81px] tw-h-[47px] tw-bg-[#62C654] tw-rounded-full tw-text-[#FFFFFF] tw-text-sm tw-font-medium
+  }
+  
+  .modal_add_footer {
+    @apply tw-flex tw-flex-shrink-0 tw-flex-wrap tw-items-center tw-justify-end tw-py-2 tw-px-6 tw-border-t tw-border-gray-200 tw-rounded-b-md
+  }
+
+  .is_modal {
+    @apply tw-fixed tw-top-0 tw-left-0 tw-hidden tw-w-full tw-h-full tw-outline-none tw-overflow-x-hidden tw-overflow-y-auto
+  }
+
