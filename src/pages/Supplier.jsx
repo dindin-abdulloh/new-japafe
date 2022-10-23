@@ -1,11 +1,11 @@
 import React, { useState, memo, useLayoutEffect, useEffect } from 'react'
 // import BootstrapTable from 'react-bootstrap-table-next'
-import {
-    textFilter,
-    selectFilter,
-    customFilter,
-    FILTER_TYPES
-} from 'react-bootstrap-table2-filter'
+// import {
+//     textFilter,
+//     selectFilter,
+//     customFilter,
+//     FILTER_TYPES
+// } from 'react-bootstrap-table2-filter'
 import 'react-bootstrap-table-next/dist/react-bootstrap-table2.min.css'
 import 'react-bootstrap-table2-paginator/dist/react-bootstrap-table2-paginator.min.css'
 import AksiFormatter from '../components/supplier/AksiFormatter'
@@ -18,16 +18,10 @@ import ModalDetail from '../components/supplier/ModalDetail'
 import ModalRemove from '../components/supplier/ModalRemove'
 import MyTable from '../components/tabel/MyTable'
 import { useDispatch, useSelector } from 'react-redux'
-import { getSupplier, setSuccess } from '../store/slices/supplierSlice'
+import { getProvince, getSupplier, setSuccess, getDataCity, getDataDistrict } from '../store/slices/supplierSlice'
 import moment from 'moment'
 
-const classNameFilterForm =
-    'tw-form-control tw-flex tw-py-1 tw-px-2 tw-text-xs tw-font-normal tw-text-gray-700 tw-bg-white tw-bg-clip-padding tw-border tw-border-solid tw-border-gray-300 tw-rounded tw-transition tw-ease-in-out tw-m-0  focus:tw-text-gray-700 focus:tw-bg-white focus:tw-border-blue-600 focus:tw-outline-none'
-
 const Supplier = () => {
-    console.log('====================================')
-    console.log('page supplier')
-    console.log('====================================')
     const [val, setVal] = useState({
         createID: ''
     })
@@ -37,6 +31,31 @@ const Supplier = () => {
     const { data, limit, totalData, currentPage, isLoading } = useSelector(
         state => state.supplierSlice.dataSupplier
     )
+    const listProvince = useSelector(state => state.supplierSlice.dataProvince)
+    const listOfCity = useSelector(state => state.supplierSlice.dataCity)
+    const listOfDistricts = useSelector(state => state.supplierSlice.dataDistrict)
+
+    const initData = data.map((e) => {
+        return {
+            id : e.id,
+            id_suplier:e.id_suplier,
+            npwp : e.npwp,
+            suplier_type : e.suplier_type,
+            sup_name : e.sup_name,
+            alamat : e.alamat,
+            kota : e.kota,
+            phone : e.phone,
+            email : e.email,
+            // contact_person_sup : e.cuskontak.map((e) => {
+            //     return e.contact_person
+            // }),
+            ppn : e.ppn,
+            pph : e.pph,
+            cuskontak : e.cuskontak,
+            suprek : e.suprek,
+        }
+    })
+
 
     const [isHiden, setIsHiden] = useState({
         npwp: true,
@@ -44,16 +63,20 @@ const Supplier = () => {
         kota: true,
         phone: false,
         email: true,
-        bank_akun: true,
-        akun_name: true,
-        akun_number: true,
-        contact_person_sup: false,
+        // bank_akun: true,
+        // akun_name: true,
+        // akun_number: true,
+        // contact_person_sup: false,
         ppn: true,
         pph: true,
+        cuskontak : true,
+        suprek : true,
+
     })
 
     const [valAksi, setValAksi] = useState({
         id: '',
+        npwp: '',
         suplier_type: '',
         id_suplier: '',
         sup_name: '',
@@ -61,12 +84,14 @@ const Supplier = () => {
         kota: '',
         phone: '',
         email: '',
-        bank_akun: '',
-        akun_name: '',
-        akun_number: '',
-        contact_person_sup: '',
+        // bank_akun: '',
+        // akun_name: '',
+        // akun_number: '',
+        // contact_person_sup: '',
         ppn: '',
-        pph: ''
+        pph: '',
+        suprek : [],
+        cuskontak : []
     })
 
     const defaultToggleColumn = (toggleVal, columnField) => {
@@ -86,9 +111,6 @@ const Supplier = () => {
     }
 
     const showModalHandler = (type, row = null) => {
-        console.log('====================================')
-        console.log(type)
-        console.log('====================================')
         let elModal = null
         if (row !== null) {
             setValAksi(valAksi => ({
@@ -97,16 +119,19 @@ const Supplier = () => {
                 suplier_type: row.suplier_type,
                 id_suplier: row.id_suplier,
                 sup_name: row.sup_name,
+                npwp : row.npwp,
                 alamat: row.alamat,
                 kota: row.kota,
                 phone: row.phone,
                 email: row.email,
-                bank_akun: row.bank_akun,
-                akun_name: row.akun_name,
-                akun_number: row.akun_number,
-                contact_person_sup: row.contact_person_sup,
+                // bank_akun: row.bank_akun,
+                // akun_name: row.akun_name,
+                // akun_number: row.akun_number,
+                // contact_person_sup: row.contact_person_sup,
                 ppn: row.ppn,
                 pph: row.pph,
+                suprek : row.suprek,
+                cuskontak : row.cuskontak
             }))
         }
 
@@ -189,30 +214,30 @@ const Supplier = () => {
             text: 'Office Email',
             headerStyle: () => ({ width: '180px' })
         },
-        {
-            hidden: isHiden.contact_person_sup,
-            dataField: 'contact_person_sup',
-            text: 'Contact Person',
-            headerStyle: () => ({ width: '180px' })
-        },
-        {
-            hidden: isHiden.bank_akun,
-            dataField: 'bank_akun',
-            text: 'Bank Name',
-            headerStyle: () => ({ width: '180px' })
-        },
-        {
-            hidden: isHiden.akun_name,
-            dataField: 'akun_name',
-            text: 'Account Name',
-            headerStyle: () => ({ width: '180px' })
-        },
-        {
-            hidden: isHiden.akun_number,
-            dataField: 'akun_number',
-            text: 'Account Number',
-            headerStyle: () => ({ width: '180px' })
-        },
+        // {
+        //     hidden: isHiden.contact_person_sup,
+        //     dataField: 'contact_person_sup',
+        //     text: 'Contact Person',
+        //     headerStyle: () => ({ width: '180px' })
+        // },
+        // {
+        //     hidden: isHiden.bank_akun,
+        //     dataField: 'bank_akun',
+        //     text: 'Bank Name',
+        //     headerStyle: () => ({ width: '180px' })
+        // },
+        // {
+        //     hidden: isHiden.akun_name,
+        //     dataField: 'akun_name',
+        //     text: 'Account Name',
+        //     headerStyle: () => ({ width: '180px' })
+        // },
+        // {
+        //     hidden: isHiden.akun_number,
+        //     dataField: 'akun_number',
+        //     text: 'Account Number',
+        //     headerStyle: () => ({ width: '180px' })
+        // },
         {
             hidden: isHiden.ppn,
             dataField: 'ppn',
@@ -309,17 +334,30 @@ const Supplier = () => {
         dispatch(getSupplier({ token: token }))
     }, [])
 
+    useLayoutEffect(() => {
+        dispatch(getProvince({ token: token }))
+    }, [])
+
     useEffect(() => {
         return () => {
             dispatch(setSuccess(false))
         }
     }, [])
 
+    const getCity = (id) => {
+        dispatch(getDataCity({id : id, token: token }))
+    }
+
+    const getDistricts = (id) => {
+        dispatch(getDataDistrict({id : id, token : token}))
+    }
+
     return (
         <>
             <div className='tw-bg-white tw-p-3 tw-rounded-lg'>
                 <MyTable
-                    data={data}
+                    btnProps={"Supplier"}
+                    data={initData}
                     columns={columns}
                     options={options}
                     defaultToggleColumn={defaultToggleColumn}
@@ -330,8 +368,24 @@ const Supplier = () => {
                     remote={true}
                 />
             </div>
-            <ModalTambah val={val} token={token} />
-            <ModalEdit valAksi={valAksi} token={token} />
+            <ModalTambah 
+                listOfDistricts={listOfDistricts} 
+                getDistricts={getDistricts} 
+                getCity={getCity} 
+                listOfCity={listOfCity} 
+                listProvince={listProvince} 
+                val={val} 
+                token={token} 
+            />
+            <ModalEdit 
+                listOfCity={listOfCity} 
+                getDistricts={getDistricts} 
+                listProvince={listProvince} 
+                getCity={getCity} 
+                valAksi={valAksi} 
+                token={token} 
+                listOfDistricts={listOfDistricts} 
+            />
             <ModalDetail valAksi={valAksi} token={token} />
             <ModalRemove valId={valAksi.id} token={token} />
         </>

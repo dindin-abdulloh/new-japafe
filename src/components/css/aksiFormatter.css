@@ -1,0 +1,11 @@
+.is_delete_btn {
+    @apply tw-bg-[#E9787A] tw-max-w-[44px] tw-max-h-[36px] tw-text-[#FFFFFF] tw-p-[5px] tw-rounded-md
+}
+
+.is_edit_btn {
+    @apply tw-bg-[#F6C250] tw-max-w-[44px] tw-max-h-[36px] tw-text-[#FFFFFF] tw-p-[5px] tw-rounded-md
+}
+
+.is_view_btn {
+    @apply tw-bg-[#08B382] tw-max-w-[44px] tw-max-h-[36px] tw-text-[#FFFFFF] tw-p-[5px] tw-rounded-md
+}

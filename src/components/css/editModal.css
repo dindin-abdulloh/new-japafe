@@ -1,0 +1,4 @@
+.is_modal_edit {
+    @apply tw-fixed tw-top-0 tw-left-0 tw-hidden tw-w-full tw-h-full tw-outline-none tw-overflow-x-hidden tw-overflow-y-auto
+}
+

@@ -55,9 +55,6 @@ const ModalRemove = ({ valId, token }) => {
               </button>
               <button
                 onClick={() => {
-                  console.log('====================================');
-                  console.log(valId);
-                  console.log('====================================');
                   dispatch(deleteSupplier({ id: valId, token: token }))
                 }}
                 type='button'
