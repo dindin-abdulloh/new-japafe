@@ -317,54 +317,7 @@ const ModalTambah = ({ val, token, listProvince, getCity, listOfCity, getDistric
                               }
                             </div>
                           </div>
-                          {/* <div className='form-group mb-2'>
-                            <label
-                              htmlFor='exampleInputEmail2'
-                              className='tw-form-label tw-text-sm tw-font-bold tw-inline-block tw-mb-2 tw-text-gray-700'
-                            >
-                              Address
-                            </label>
-                            <div className='tw-relative'>
-                              <input
-                                onChange={formik.handleChange}
-                                value={formik.values.alamat}
-                                name='alamat'
-                                type='text'
-                                className={`${formik.touched.alamat && formik.errors.alamat ? `tw-border-red-500` : `tw-border-gray-300`} tw-form-control tw-block tw-w-full tw-px-3 tw-py-2 tw-text-sm tw-font-normal  tw-text-gray-700 tw-bg-white tw-bg-clip-padding tw-border tw-border-solid tw-rounded tw-transition tw-ease-in-out tw-m-0 focus:tw-text-gray-700 focus:tw-bg-white focus:tw-border-sky-600 focus:tw-outline-none`}
-                                id='alamat'
-                                placeholder='Address'
-                              />
-                              {
-                                formik.touched.alamat && formik.errors.alamat && <p className='tw-absolute tw-text-red-500 -tw-top-4 tw-right-0 tw-m-0 tw-text-xs'>
-                                  {formik.errors.alamat}
-                                </p>
-                              }
-                            </div>
-                          </div> */}
-                          {/* <div className='form-group mb-2'>
-                            <label
-                              htmlFor='exampleInputEmail2'
-                              className='tw-form-label tw-text-sm tw-font-bold tw-inline-block tw-mb-2 tw-text-gray-700'
-                            >
-                              City
-                            </label>
-                            <div className='tw-relative'>
-                              <input
-                                onChange={formik.handleChange}
-                                value={formik.values.kota}
-                                name='kota'
-                                type='text'
-                                className={`${formik.touched.kota && formik.errors.kota ? `tw-border-red-500` : `tw-border-gray-300`} tw-form-control tw-block tw-w-full tw-px-3 tw-py-2 tw-text-sm tw-font-normal  tw-text-gray-700 tw-bg-white tw-bg-clip-padding tw-border tw-border-solid tw-rounded tw-transition tw-ease-in-out tw-m-0 focus:tw-text-gray-700 focus:tw-bg-white focus:tw-border-sky-600 focus:tw-outline-none`}
-                                id='kota'
-                                placeholder='City'
-                              />
-                              {
-                                formik.touched.kota && formik.errors.kota && <p className='tw-absolute tw-text-red-500 -tw-top-4 tw-right-0 tw-m-0 tw-text-xs'>
-                                  {formik.errors.kota}
-                                </p>
-                              }
-                            </div>
-                          </div> */}
+                          
                           <div className='form-group mb-2'>
                             <label
                               htmlFor='exampleInputEmail2'
@@ -581,40 +534,6 @@ const ModalTambah = ({ val, token, listProvince, getCity, listOfCity, getDistric
                                 }
                               </div>
                           </div>
-
-                          {/* <div className='tw-form-group tw-mb-2'>
-                              <label
-                                htmlFor='exampleInputEmail2'
-                                className='tw-form-label tw-text-sm tw-font-bold tw-inline-block tw-mb-2 tw-text-gray-700'
-                              >
-                                City
-                              </label>
-                              <div className='tw-relative'>
-                                <select
-                                  onChange={formik.handleChange}
-                                  value={formik.values.kota}
-                                  id='kota'
-                                  name='kota'
-                                  className={`${formik.touched.kota && formik.errors.kota ? `tw-border-red-500` : `tw-border-gray-300`} tw-form-control tw-block tw-w-full tw-px-3 tw-py-2 tw-text-sm tw-font-normal  tw-text-gray-700 tw-bg-white tw-bg-clip-padding tw-border tw-border-solid tw-rounded tw-transition tw-ease-in-out tw-m-0 focus:tw-text-gray-700 focus:tw-bg-white focus:tw-border-sky-600 focus:tw-outline-none`}
-                                  aria-label='Default select example'
-                                >
-                                  <option value="" disabled>
-                                    Select City
-                                  </option>
-                                  {listOfCity.data.map((e, i) => {
-                                    return (
-                                      <option key={i} value={e.city_name}>{e.city_name}</option>
-                                    )
-                                  })}
-                                  
-                                </select>
-                                {
-                                  formik.touched.kota && formik.errors.kota && <p className='tw-absolute tw-text-red-500 -tw-top-4 tw-right-0 tw-m-0 tw-text-xs'>
-                                    {formik.errors.kota}
-                                  </p>
-                                }
-                              </div>
-                          </div> */}
                         </div>
                         <div className='form-group mb-2'>
                             <label
@@ -888,14 +807,15 @@ const ModalTambah = ({ val, token, listProvince, getCity, listOfCity, getDistric
                     </div>
                     <div className='tw-flex tw-gap-6'>
 
-                    <div className='form-group mb-2'>
+                    <div className='tw-form-group tw-mb-2 tw-w-1/2'>
                         <label
                           htmlFor='exampleInputEmail2'
                           className='tw-form-label tw-text-sm tw-font-bold tw-inline-block tw-mb-2 tw-text-gray-700'
                         >
                           Phone Number
                         </label>
-                        <PhoneInput
+                        <div className='tw-relative'>
+                          <PhoneInput
                           country={'id'}
                           value={formikCp.values.contact_person_telp}
                           onChange={phone => {
@@ -906,11 +826,13 @@ const ModalTambah = ({ val, token, listProvince, getCity, listOfCity, getDistric
                           }}
                         />
 
-                        {
-                          formik.touched.contact_person_telp && formik.errors.contact_person_telp && <p className='tw-absolute tw-text-red-500 -tw-top-4 tw-right-0 tw-m-0 tw-text-xs'>
-                            {formik.errors.contact_person_telp}
-                          </p>
-                        }
+                          {
+                            (formikCp.touched.contact_person_telp && formikCp.errors.contact_person_telp) &&
+                            <p className='tw-absolute tw-text-red-500 -tw-top-4 tw-right-0 tw-m-0 tw-text-xs'>
+                              {formikCp.errors.contact_person_telp}
+                            </p>
+                          }
+                        </div>
                       </div>
                       <div className='tw-form-group tw-mb-2 tw-w-1/2'>
                         <label

@@ -18,7 +18,8 @@ import ModalDetail from '../components/supplier/ModalDetail'
 import ModalRemove from '../components/supplier/ModalRemove'
 import MyTable from '../components/tabel/MyTable'
 import { useDispatch, useSelector } from 'react-redux'
-import { getProvince, getSupplier, setSuccess, getDataCity, getDataDistrict } from '../store/slices/supplierSlice'
+import { getSupplier, setSuccess } from '../store/slices/supplierSlice'
+import { getProvince, getDataCity, getDataDistrict } from '../store/slices/generalSlice'
 import moment from 'moment'
 
 const Supplier = () => {

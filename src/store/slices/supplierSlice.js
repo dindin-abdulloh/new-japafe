@@ -51,7 +51,21 @@ export const getDataDistrict = createAsyncThunk(
       'Content-Type': 'application/json',
       Authorization: 'Bearer ' + token
     }
-    const results = await axios.get(`/address/dis/4`, {
+    const results = await axios.get(`address/dis/${id}`, {
+      headers: headers
+    })
+    return results.data
+  }
+)
+
+export const getSubDis = createAsyncThunk(
+  'supplierSlice/getSubDis',
+  async({id = null, token = ''}) => {
+    const headers = {
+      'Content-Type': 'application/json',
+      Authorization: 'Bearer ' + token
+    }
+    const results = await axios.get(`address/subdis/${id}`, {
       headers: headers
     })
     return results.data
@@ -91,7 +105,9 @@ export const editSupplier = createAsyncThunk(
       akun_number,
       contact_person_sup,
       ppn,
-      pph
+      pph,
+      suprek,
+      cuskontak
     } = data
     const results = await axios.put(
       `supplier/${id}`,
@@ -108,7 +124,9 @@ export const editSupplier = createAsyncThunk(
         akun_number,
         contact_person_sup,
         ppn,
-        pph
+        pph,
+        suprek,
+        cuskontak
       },
       { headers: headers }
     )
@@ -153,6 +171,11 @@ const initialState = {
   },
 
   dataDistrict : {
+    data : [],
+    isLoading : false
+  },
+
+  dataSubDistrict : {
     data : [],
     isLoading : false
   }
@@ -227,6 +250,26 @@ const supplierSlice = createSlice({
         ...state.dataDistrict,
         data : action.payload.msg
       }
+    },
+
+    [getDataDistrict.rejected] : state => {
+      state.dataDistrict.isLoading = false
+    },
+
+    // get Sub District
+    [getSubDis.pending] : state => {
+      state.dataSubDistrict.isLoading = true
+    },
+
+    [getSubDis.fulfilled] : (state, action) => {
+      state.dataSubDistrict = {
+        ...state.dataSubDistrict,
+        data : action.payload.msg
+      }
+    },
+
+    [getSubDis.rejected] : state => {
+      state.dataSubDistrict.isLoading = false
     },
 
     [getDataDistrict.rejected] : state => {

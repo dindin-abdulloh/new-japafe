@@ -19,22 +19,25 @@ import ModalRemove from '../components/employe/ModalRemove'
 import MyTable from '../components/tabel/MyTable'
 import { useDispatch, useSelector } from 'react-redux'
 import { getEmployees, setSuccess } from '../store/slices/employeeSlice'
+import { getProvince, getDataCity, getDataDistrict, getSubDis, getDepart } from '../store/slices/generalSlice'
 import moment from 'moment'
 const classNameFilterForm =
     'tw-form-control tw-flex tw-py-1 tw-px-2 tw-text-xs tw-font-normal tw-text-gray-700 tw-bg-white tw-bg-clip-padding tw-border tw-border-solid tw-border-gray-300 tw-rounded tw-transition tw-ease-in-out tw-m-0  focus:tw-text-gray-700 focus:tw-bg-white focus:tw-border-sky-600 focus:tw-outline-none'
 
 const Employe = () => {
-    console.log('====================================')
-    console.log('page employe')
-    console.log('====================================')
     const [token, setToken] = useState(sessionStorage.getItem('token'))
     const dispatch = useDispatch()
     const { data, limit, totalData, currentPage, isLoading } = useSelector(
         state => state.employeeSlice.dataEmployee
     )
+    const listOfDistricts = useSelector(state => state.supplierSlice.dataDistrict)
+    const listOfCity = useSelector(state => state.supplierSlice.dataCity)
+    const listProvince = useSelector(state => state.supplierSlice.dataProvince)
+    const listOfSubDist = useSelector(state => state.supplierSlice.dataSubDistrict)
+    const depart = useSelector(state => state.generalSlice.dataDepart)
 
     const [isHiden, setIsHiden] = useState({
-        departement: false,
+        departement_id: false,
         email: true,
         phone: true,
         tmptlahir: true,
@@ -50,25 +53,34 @@ const Employe = () => {
     })
 
     const [valAksi, setValAksi] = useState({
-        id: '',
-        NIP: '',
-        nickname: '',
-        nama_karyawan: '',
-        departement: '',
-        email: '',
-        phone: '',
-        tmptlahir: '',
-        tgllahir: '',
-        id_card: '',
-        karyawan_status: '',
-        jenis_kelamin: '',
-        status: '',
-        alamat: '',
-        kota: '',
-        starjoin: '',
-        sisa_cuti: '',
+        id: "",
+        nik: "",
+        nickname: "",
+        nama_karyawan: "",
+        departement_id: "",
+        email: "",
+        alamat: "",
+        kota: "",
+        provinsi: "",
+        kecamatan: "",
+        kelurahan: "",
+        kodepos: "",
+        phone: "",
+        tmptlahir: "",
+        tgllahir: "",
+        id_card: "",
+        karyawan_status: "",
+        jenis_kelamin: "",
+        status: "",
+        starjoin: "",
+        sisa_cuti: "",
+        spouse_name: "",
+        jenis_kelamin_spouse: "",
+        tmpt_lahir_spouse: "",
+        tgllahir_spouse: "",
         emppen: [],
-        emppel: []
+        emppel: [],
+        empchild: []
     })
 
     const defaultToggleColumn = (toggleVal, columnField) => {
@@ -81,7 +93,7 @@ const Employe = () => {
     const conditionHidden = column => {
         return (
             column.text !== '#' &&
-            column.text !== 'NIP' &&
+            column.text !== 'nik' &&
             column.text !== 'Employee Name' &&
             column.text !== 'Aksi'
         )
@@ -90,15 +102,20 @@ const Employe = () => {
     const showModalHandler = (type, row = null) => {
         let elModal = null
         if (row !== null) {
-            console.log(row)
             setValAksi(valAksi => ({
                 ...valAksi,
                 id: row.id,
-                NIP: row.NIP,
+                nik: row.nik,
                 nickname: row.nickname,
                 nama_karyawan: row.nama_karyawan,
-                departement: row.departement,
+                departement_id: row.departement_id,
                 email: row.email,
+                alamat: row.alamat,
+                kota: row.kota,
+                provinsi: row.provinsi,
+                kecamatan: row.kecamatan,
+                kelurahan: row.kelurahan,
+                kodepos: row.kodepos,
                 phone: row.phone,
                 tmptlahir: row.tmptlahir,
                 tgllahir: row.tgllahir,
@@ -106,10 +123,15 @@ const Employe = () => {
                 karyawan_status: row.karyawan_status,
                 jenis_kelamin: row.jenis_kelamin,
                 status: row.status,
-                alamat: row.alamat,
-                kota: row.kota,
                 starjoin: row.starjoin,
                 sisa_cuti: row.sisa_cuti,
+                spouse_name: row.spouse_name,
+                jenis_kelamin_spouse: row.jenis_kelamin_spouse,
+                tmpt_lahir_spouse: row.tmpt_lahir_spouse,
+                tgllahir_spouse: row.tgllahir_spouse,
+                emppen: row.emppen,
+                emppel: row.emppel,
+                empchild: row.empchild
             }))
         }
 
@@ -149,8 +171,8 @@ const Employe = () => {
             }
         },
         {
-            dataField: 'NIP',
-            text: 'NIP',
+            dataField: 'nik',
+            text: 'NIK',
             headerStyle: () => ({ width: '180px' })
         },
         {
@@ -165,8 +187,8 @@ const Employe = () => {
             headerStyle: () => ({ width: '180px' })
         },
         {
-            hidden: isHiden.departement,
-            dataField: 'departement',
+            hidden: isHiden.departement_id,
+            dataField: 'departement_id',
             text: 'Department',
             headerStyle: () => ({ width: '180px' })
         },
@@ -290,16 +312,36 @@ const Employe = () => {
     }, [])
 
     useEffect(() => {
-        console.log(data)
         return () => {
             dispatch(setSuccess(false))
         }
+    }, [])
+
+    useLayoutEffect(() => {
+        dispatch(getProvince({ token: token }))
+    }, [])
+
+    const getCity = (id) => {
+        dispatch(getDataCity({id : id, token: token }))
+    }
+
+    const getDistricts = (id) => {
+        dispatch(getDataDistrict({id : id, token : token}))
+    }
+
+    const getSubDistrict = (id) => {
+        dispatch(getSubDis({id : id, token: token }))
+    }
+
+    useLayoutEffect(() => {
+        dispatch(getDepart({ token: token }))
     }, [])
 
     return (
         <>
             <div className='tw-bg-white tw-p-3 tw-rounded-lg'>
                 <MyTable
+                    btnProps={'Employee'}
                     data={data}
                     columns={columns}
                     options={options}
@@ -311,8 +353,18 @@ const Employe = () => {
                     remote={true}
                 />
             </div>
-            <ModalTambah token={token} />
-            <ModalEdit valAksi={valAksi} token={token} />
+            <ModalTambah
+                listOfDistricts={listOfDistricts} 
+                getDistricts={getDistricts} 
+                getCity={getCity} 
+                listOfCity={listOfCity} 
+                listProvince={listProvince} 
+                listOfSubDist={listOfSubDist}
+                getSubDistrict={getSubDistrict}
+                token={token}
+                depart={depart}
+            />
+            <ModalEdit depart={depart} valAksi={valAksi} token={token} />
             <ModalDetail valAksi={valAksi} token={token} />
             <ModalRemove valId={valAksi.id} token={token} />
         </>

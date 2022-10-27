@@ -20,16 +20,12 @@ import { useDispatch, useSelector } from 'react-redux'
 import { getCustomer, setSuccess } from '../store/slices/customerSlice'
 import { useOutletContext } from "react-router-dom";
 import moment from "moment"
+import { getProvince, getDataCity, getDataDistrict, getSubDis } from '../store/slices/generalSlice'
 
 
-const classNameFilterForm =
-    'tw-form-control tw-flex tw-py-1 tw-px-2 tw-text-xs tw-font-normal tw-text-gray-700 tw-bg-white tw-bg-clip-padding tw-border tw-border-solid tw-border-gray-300 tw-rounded tw-transition tw-ease-in-out tw-m-0  focus:tw-text-gray-700 focus:tw-bg-white focus:tw-border-sky-600 focus:tw-outline-none'
 
 
 const Customer = () => {
-    console.log('====================================')
-    console.log('page customer')
-    console.log('====================================')
     const [val, setVal] = useState({
         createID: ''
     })
@@ -37,7 +33,29 @@ const Customer = () => {
     const [token, setToken] = useState(sessionStorage.getItem('token'));
     const dispatch = useDispatch()
     const { data, limit, totalData, currentPage, isLoading } = useSelector(state => state.customerSlice.dataCustomer)
+    const listOfDistricts = useSelector(state => state.supplierSlice.dataDistrict)
+    const listOfCity = useSelector(state => state.supplierSlice.dataCity)
+    const listProvince = useSelector(state => state.supplierSlice.dataProvince)
+    const listOfSubDist = useSelector(state => state.supplierSlice.dataSubDistrict)
 
+
+    // const initData = data.map((e) => {
+    //     return {
+    //         id_customer: e.id_customer,
+    //         nama: e.nama,
+    //         alamat : e.addrescus.map((val) => {
+    //             return val.alamat
+    //         }),
+    //         kota: e.addrescus.map((val) => {
+    //             return val.kota
+    //         }),
+    //         email: e.email,
+    //         phone: e.cuskontak.map((val) => {
+    //             return val.contact_person_telp
+    //         }),
+    //         contact_person : e.contact_person,
+    //     }
+    // })
 
     const [isHiden, setIsHiden] = useState({
         alamat: false,
@@ -53,11 +71,13 @@ const Customer = () => {
         id_customer: '',
         nama: '',
         alamat: '',
+        addrescus : [],
         kota: '',
         email: '',
         phone: '',
         alamat_workshop: '',
         alamat_penerima: '',
+        cuskontak : []
     })
 
     const defaultToggleColumn = (toggleVal, columnField) => {
@@ -87,6 +107,8 @@ const Customer = () => {
                 alamat: row.alamat,
                 kota: row.kota,
                 email: row.email,
+                addrescus : row.addrescus,
+                cuskontak : row.cuskontak,
                 phone: row.phone,
                 alamat_workshop: row.alamat_workshop,
                 alamat_penerima: row.alamat_penerima,
@@ -240,6 +262,22 @@ const Customer = () => {
         }
     }, [])
 
+    useLayoutEffect(() => {
+        dispatch(getProvince({ token: token }))
+    }, [])
+
+    const getDistricts = (id) => {
+        dispatch(getDataDistrict({id : id, token : token}))
+    }
+
+    const getCity = (id) => {
+        dispatch(getDataCity({id : id, token: token }))
+    }
+
+    const getSubDistrict = (id) => {
+        dispatch(getSubDis({id : id, token: token }))
+    }
+
     return (
         <>
             <div className='tw-bg-white tw-p-3 tw-rounded-lg'>
@@ -254,11 +292,31 @@ const Customer = () => {
                     loading={isLoading}
                     remote={true}
                     searchHandler={searchHandler}
-
+                    btnProps={"Customer"}
                 />
             </div>
-            <ModalTambah val={val} token={token} />
-            <ModalEdit valAksi={valAksi} token={token} />
+            <ModalTambah 
+                val={val} 
+                token={token} 
+                listOfDistricts={listOfDistricts} 
+                getDistricts={getDistricts} 
+                getCity={getCity} 
+                listOfCity={listOfCity} 
+                listProvince={listProvince} 
+                listOfSubDist={listOfSubDist}
+                getSubDistrict={getSubDistrict}
+            />
+            <ModalEdit 
+                listOfDistricts={listOfDistricts} 
+                getDistricts={getDistricts} 
+                getCity={getCity} 
+                listOfCity={listOfCity} 
+                listProvince={listProvince} 
+                listOfSubDist={listOfSubDist}
+                getSubDistrict={getSubDistrict} 
+                valAksi={valAksi} 
+                token={token} 
+            />
             <ModalDetail valAksi={valAksi} token={token} />
             <ModalRemove valId={valAksi.id} token={token} />
         </>
