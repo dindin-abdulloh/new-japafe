@@ -1,5 +1,6 @@
 import React from 'react'
 import moment from 'moment'
+import {MdDelete} from "react-icons/md"
 
 const ModalDetail = ({ valAksi }) => {
   return (
@@ -31,148 +32,144 @@ const ModalDetail = ({ valAksi }) => {
             </div>
             <div className='modal-body tw-relative tw-py-2 tw-px-6'>
               {/* //content */}
-              <table className="tw-min-w-full">
-                <tbody>
-                  <tr className="tw-border-b">
-                    <td className="tw-text-sm tw-text-gray-900 tw-font-bold tw-px-6 tw-py-2 tw-whitespace-nowrap tw-w-1/3">
-                      NIP
-                    </td>
-                    <td className="tw-text-sm tw-text-gray-900 tw-font-light tw-px-6 tw-py-2 tw-whitespace-nowrap tw-w-2/3">
-                      {valAksi.nip}
-                    </td>
-                  </tr>
-                  <tr className="tw-border-b">
-                    <td className="tw-text-sm tw-text-gray-900 tw-font-bold tw-px-6 tw-py-2 tw-whitespace-nowrap tw-w-1/3">
-                      Nickname
-                    </td>
-                    <td className="tw-text-sm tw-text-gray-900 tw-font-light tw-px-6 tw-py-2 tw-whitespace-nowrap tw-w-2/3">
-                      {valAksi.nickname}
-                    </td>
-                  </tr>
-                  <tr className="tw-border-b">
-                    <td className="tw-text-sm tw-text-gray-900 tw-font-bold tw-px-6 tw-py-2 tw-whitespace-nowrap tw-w-1/3">
-                      Employee name
-                    </td>
-                    <td className="tw-text-sm tw-text-gray-900 tw-font-light tw-px-6 tw-py-2 tw-whitespace-nowrap tw-w-2/3">
-                      {valAksi.nama_karyawan}
-                    </td>
-                  </tr>
-                  <tr className="tw-border-b">
-                    <td className="tw-text-sm tw-text-gray-900 tw-font-bold tw-px-6 tw-py-2 tw-whitespace-nowrap tw-w-1/3">
-                      Department
-                    </td>
-                    <td className="tw-text-sm tw-text-gray-900 tw-font-light tw-px-6 tw-py-2 tw-whitespace-nowrap tw-w-2/3">
-                      {valAksi.departement}
-                    </td>
-                  </tr>
-                  <tr className="tw-border-b">
-                    <td className="tw-text-sm tw-text-gray-900 tw-font-bold tw-px-6 tw-py-2 tw-whitespace-nowrap tw-w-1/3">
-                      Email
-                    </td>
-                    <td className="tw-text-sm tw-text-gray-900 tw-font-light tw-px-6 tw-py-2 tw-whitespace-nowrap tw-w-2/3">
-                      {valAksi.email}
-                    </td>
-                  </tr>
-                  <tr className="tw-border-b">
-                    <td className="tw-text-sm tw-text-gray-900 tw-font-bold tw-px-6 tw-py-2 tw-whitespace-nowrap tw-w-1/3">
-                      Birth place
-                    </td>
-                    <td className="tw-text-sm tw-text-gray-900 tw-font-light tw-px-6 tw-py-2 tw-whitespace-nowrap tw-w-2/3">
-                      {valAksi.tmptlahir}
-                    </td>
-                  </tr>
-                  <tr className="tw-border-b">
-                    <td className="tw-text-sm tw-text-gray-900 tw-font-bold tw-px-6 tw-py-2 tw-whitespace-nowrap tw-w-1/3">
-                      Birth date
-                    </td>
-                    <td className="tw-text-sm tw-text-gray-900 tw-font-light tw-px-6 tw-py-2 tw-whitespace-nowrap tw-w-2/3">
-                      {moment(valAksi.tgllahir).format('M/DD/YYYY')}
-                    </td>
-                  </tr>
-                  <tr className="tw-border-b">
-                    <td className="tw-text-sm tw-text-gray-900 tw-font-bold tw-px-6 tw-py-2 tw-whitespace-nowrap tw-w-1/3">
-                      ID Card
-                    </td>
-                    <td className="tw-text-sm tw-text-gray-900 tw-font-light tw-px-6 tw-py-2 tw-whitespace-nowrap tw-w-2/3">
-                      {valAksi.id_card}
-                    </td>
-                  </tr>
-                  <tr className="tw-border-b">
-                    <td className="tw-text-sm tw-text-gray-900 tw-font-bold tw-px-6 tw-py-2 tw-whitespace-nowrap tw-w-1/3">
-                      Employee status
-                    </td>
-                    <td className="tw-text-sm tw-text-gray-900 tw-font-light tw-px-6 tw-py-2 tw-whitespace-nowrap tw-w-2/3">
-                      {valAksi.karyawan_status}
-                    </td>
-                  </tr>
-                  <tr className="tw-border-b">
-                    <td className="tw-text-sm tw-text-gray-900 tw-font-bold tw-px-6 tw-py-2 tw-whitespace-nowrap tw-w-1/3">
-                      Gender
-                    </td>
-                    <td className="tw-text-sm tw-text-gray-900 tw-font-light tw-px-6 tw-py-2 tw-whitespace-nowrap tw-w-2/3">
-                      {valAksi.jenis_kelamin}
-                    </td>
-                  </tr>
-                  <tr className="tw-border-b">
-                    <td className="tw-text-sm tw-text-gray-900 tw-font-bold tw-px-6 tw-py-2 tw-whitespace-nowrap tw-w-1/3">
-                      Maritial Status
-                    </td>
-                    <td className="tw-text-sm tw-text-gray-900 tw-font-light tw-px-6 tw-py-2 tw-whitespace-nowrap tw-w-2/3">
-                      {valAksi.status}
-                    </td>
-                  </tr>
-                  <tr className="tw-border-b">
-                    <td className="tw-text-sm tw-text-gray-900 tw-font-bold tw-px-6 tw-py-2 tw-whitespace-nowrap tw-w-1/3">
-                      City
-                    </td>
-                    <td className="tw-text-sm tw-text-gray-900 tw-font-light tw-px-6 tw-py-2 tw-whitespace-nowrap tw-w-2/3">
-                      {valAksi.kota}
-                    </td>
-                  </tr>
-                  <tr className="tw-border-b">
-                    <td className="tw-text-sm tw-text-gray-900 tw-font-bold tw-px-6 tw-py-2 tw-whitespace-nowrap tw-w-1/3">
-                      Start Joining
-                    </td>
-                    <td className="tw-text-sm tw-text-gray-900 tw-font-light tw-px-6 tw-py-2 tw-whitespace-nowrap tw-w-2/3">
-                      {moment(valAksi.starjoin).format('M/DD/YYYY')}
-                    </td>
-                  </tr>
-                  <tr className="tw-border-b">
-                    <td className="tw-text-sm tw-text-gray-900 tw-font-bold tw-px-6 tw-py-2 tw-whitespace-nowrap tw-w-1/3">
-                      Remaining days off
-                    </td>
-                    <td className="tw-text-sm tw-text-gray-900 tw-font-light tw-px-6 tw-py-2 tw-whitespace-nowrap tw-w-2/3">
-                      {moment(valAksi.endjoin).format('M/DD/YYYY')}
-                    </td>
-                  </tr>
-                  {/* <tr className="tw-border-b">
-                    <td className="tw-text-sm tw-text-gray-900 tw-font-bold tw-px-6 tw-py-2 tw-whitespace-nowrap tw-w-1/3">
-                      Phone Number
-                    </td>
-                    <td className="tw-text-sm tw-text-gray-900 tw-font-light tw-px-6 tw-py-2 tw-whitespace-nowrap tw-w-2/3">
-                      QU202208063
-                    </td>
-                  </tr>
-                  <tr className="tw-border-b">
-                    <td className="tw-text-sm tw-text-gray-900 tw-font-bold tw-px-6 tw-py-2 tw-whitespace-nowrap tw-w-1/3">
-                      Email
-                    </td>
-                    <td className="tw-text-sm tw-text-gray-900 tw-font-light tw-px-6 tw-py-2 tw-whitespace-nowrap tw-w-2/3">
-                      QU202208063
-                    </td>
-                  </tr> */}
-                </tbody>
-              </table>
-            </div>
-            <div className='modal-footer tw-flex tw-flex-shrink-0 tw-flex-wrap tw-items-center tw-justify-end tw-py-2 tw-px-6 tw-border-t tw-border-gray-200 tw-rounded-b-md'>
-              <button
-                type='button'
-                className='hover:tw-bg-red-600 tw-inline-block tw-px-6 tw-py-2 tw-bg-red-500 tw-text-white tw-font-bold tw-text-xs tw-rounded tw-duration-150 tw-ease-in-out'
-                data-bs-dismiss='modal'
-              >
-                Close
-              </button>
-            </div>
+              <h2 className='tw-text-[18px] tw-text-[#000000] tw-font-bold tw-pt-[15px]'>Employee</h2>
+              <div className='tw-flex tw-gap-2 tw-pt-[8px]'>
+                  <p className='tw-text-[#666666] tw-text-[14px] tw-font-[400]'>Employee Name :</p>
+                  <h6 className='tw-text-[#000000] tw-text-[14px] tw-font-semibold tw-translate-y-1'>{valAksi.nama_karyawan}</h6>
+              </div>
+
+              <div className='tw-flex tw-gap-2 tw-pt-[8px]'>
+                  <p className='tw-text-[#666666] tw-text-[14px] tw-font-[400]'>NIK :</p>
+                  <h6 className='tw-text-[#000000] tw-text-[14px] tw-font-semibold tw-translate-y-1'>{valAksi.nik}</h6>
+                  <p className='tw-text-[#666666] tw-text-[14px] tw-font-[400]'>City :</p>
+                  <h6 className='tw-text-[#000000] tw-text-[14px] tw-font-semibold tw-translate-y-1'>{valAksi.kota}</h6>
+              </div>
+
+              <div className='tw-flex tw-gap-2 tw-pt-[8px]'>
+                  <p className='tw-text-[#666666] tw-text-[14px] tw-font-[400]'>Gender :</p>
+                  <h6 className='tw-text-[#000000] tw-text-[14px] tw-font-semibold tw-translate-y-1'>{valAksi.jenis_kelamin}</h6>
+                  <p className='tw-text-[#666666] tw-text-[14px] tw-font-[400]'>Birthplace :</p>
+                  <h6 className='tw-text-[#000000] tw-text-[14px] tw-font-semibold tw-translate-y-1'>{valAksi.tgllahir}</h6>
+              </div>
+
+              <div className='tw-flex tw-gap-2 tw-pt-[8px]'>
+                  <p className='tw-text-[#666666] tw-text-[14px] tw-font-[400]'>Start joining :</p>
+                  <h6 className='tw-text-[#000000] tw-text-[14px] tw-font-semibold tw-translate-y-1'>{valAksi.starjoin}</h6>
+              </div>
+
+              <div className='tw-flex tw-gap-2 tw-pt-[8px]'>
+                  <p className='tw-text-[#666666] tw-text-[14px] tw-font-[400]'>Employee Status :</p>
+                  <h6 className='tw-text-[#000000] tw-text-[14px] tw-font-semibold tw-translate-y-1'>{valAksi.karyawan_status}</h6>
+              </div>
+              
+              <div className='tw-flex tw-gap-6'>
+                <div className='tw-w-1/2'>
+                  <h2 className='tw-text-[18px] tw-text-[#000000] tw-font-bold tw-pt-[15px]'>Education</h2>
+                  {valAksi.emppen.map((val, id) => {
+                    return (
+                      <div className='tw-pt-[8px]' key={id}>
+                        <div className='tw-inline-flex'>
+                          <p className='tw-pr-2 tw-text-[#666666] tw-text-[14px] tw-font-[400]'>{val.jns_pndidikan} :</p>
+                          <p className='tw-text-[#000000] tw-text-[14px] tw-font-semibold'>{val.nama_sekolah}</p>
+                        </div>
+                      </div>
+                    )
+                  })}
+                </div>
+                <div className='tw-w-1/2'>
+                  <h2 className='tw-text-[18px] tw-text-[#000000] tw-font-bold tw-pt-[15px]'>Family</h2>
+                  <div className='tw-inline-flex'>
+                    <p className='tw-pr-2 tw-text-[#666666] tw-text-[14px] tw-font-[400]'>Spouse :</p>
+                    <p className='tw-text-[#000000] tw-text-[14px] tw-font-semibold'>{valAksi.spouse_name}</p>
+                  </div>
+                  <div className='tw-flex tw-flex-col'>
+                  {valAksi.empchild.map((val, id) => {
+                    return (
+                      <div className='tw-inline-flex'>
+                        <p className='tw-pr-2 tw-text-[#666666] tw-text-[14px] tw-font-[400]'>Child {id+1} :</p>
+                        <p className='tw-text-[#000000] tw-text-[14px] tw-font-semibold'>{val.name_child}</p>
+                      </div>
+                    )
+                  })}
+                  </div>
+                </div>
+              </div>
+
+              <h2 className='tw-text-[18px] tw-text-[#000000] tw-font-bold tw-pt-[15px]'>Certificate</h2>
+              <table className='tw-w-full'>
+                          <thead className='tw-bg-white tw-border-b-2 tw-border-t'>
+                            <tr>
+                              <th
+                                scope='tw-col'
+                                className='tw-text-sm tw-font-medium tw-text-gray-900 tw-px-6 tw-py-2 tw-text-left'
+                              >
+                                No
+                              </th>
+                              <th
+                                scope='tw-col'
+                                className='tw-text-sm tw-font-medium tw-text-gray-900 tw-px-6 tw-py-2 tw-text-left'
+                              >
+                                Description
+                              </th>
+                              <th
+                                scope='tw-col'
+                                className='tw-text-sm tw-font-medium tw-text-gray-900 tw-px-6 tw-py-2 tw-text-left'
+                              >
+                                Certificate Type
+                              </th>
+                              <th
+                                scope='tw-col'
+                                className='tw-text-sm tw-font-medium tw-text-gray-900 tw-px-6 tw-py-2 tw-text-left'
+                              >
+                                Certification Date
+                              </th>
+                              <th
+                                scope='tw-col'
+                                className='tw-text-sm tw-font-medium tw-text-gray-900 tw-px-6 tw-py-2 tw-text-left'
+                              >
+                                File
+                              </th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {
+                              valAksi.emppel.map((i, idx) => {
+                                return (
+                                  <tr
+                                    key={idx}
+                                    className='tw-border-b hover:tw-bg-sky-100'
+                                  >
+                                    <td className='tw-text-sm tw-text-gray-900 tw-font-light tw-px-6 tw-py-2 tw-whitespace-wrap tw-w-12'>
+                                      {idx + 1}
+                                    </td>
+                                    <td className='tw-text-sm tw-text-gray-900 tw-font-light tw-px-6 tw-py-2 tw-whitespace-wrap tw-w-1/3'>
+                                      {i.ket}
+                                    </td>
+                                    <td className='tw-text-sm tw-text-gray-900 tw-font-light tw-px-6 tw-py-2 tw-whitespace-wrap tw-w-1/3'>
+                                      {i.jns_pelatihan}
+                                    </td>
+                                    <td className='tw-text-sm tw-text-gray-900 tw-font-light tw-px-6 tw-py-2 tw-whitespace-wrap tw-w-1/3'>
+                                      {i.wktu_selesai}
+                                    </td>
+                                    <td className='tw-text-sm tw-text-gray-900 tw-font-light tw-px-6 tw-py-2 tw-whitespace-wrap'>
+                                      <a href={`${i.upload}`} download="file" target="_blank" >Download</a>
+                                    </td>
+                                  </tr>
+                                )
+                              })
+                            }
+                          </tbody>
+                        </table>
+                      </div>
+                    <div className='modal-footer tw-flex tw-flex-shrink-0 tw-flex-wrap tw-items-center tw-justify-end tw-py-2 tw-px-6 tw-border-t tw-border-gray-200 tw-rounded-b-md'>
+                      <button
+                        type='button'
+                        className='hover:tw-bg-red-600 tw-inline-block tw-px-6 tw-py-2 tw-bg-red-500 tw-text-white tw-font-bold tw-text-xs tw-rounded tw-duration-150 tw-ease-in-out'
+                        data-bs-dismiss='modal'
+                      >
+                        Close
+                      </button>
+                    </div>
           </div>
         </div>
       </div>

@@ -3,13 +3,11 @@ import axios from '../../axios/api'
 import { toast } from 'react-toastify'
 export const signIn = createAsyncThunk('authSlice/signIn', async data => {
   const results = await axios.post(`signin`, data)
-  console.log(results)
   return results.data
 })
 
 export const signUp = createAsyncThunk('authSlice/signUp', async data => {
   const results = await axios.post(`signup`, data)
-  console.log(results)
   return results.data
 })
 

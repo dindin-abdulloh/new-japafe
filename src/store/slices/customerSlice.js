@@ -49,20 +49,29 @@ export const addCustomer = createAsyncThunk(
 export const editCustomer = createAsyncThunk(
   'customerSlice/editCustomer',
   async ({ data = null, token = '' }) => {
-    const { id, nama, alamat, kota, email, phone, contact_person } = data
+    const { id, id_customer, nama, alamat, kota, email, phone, contact_person, alamat_penerima, alamat_workshop, 
+      cuskontak, 
+      addrescus 
+    } = data
     const headers = {
       'Content-Type': 'application/json',
       Authorization: 'Bearer ' + token
     }
     const results = await axios.put(
       `customer/${id}`,
-      {
+      { 
+        id,
+        id_customer,
         nama,
         alamat,
         kota,
         email,
         phone,
-        contact_person
+        contact_person,
+        alamat_workshop,
+        alamat_penerima,
+        cuskontak,
+        addrescus
       },
       {
         headers: headers

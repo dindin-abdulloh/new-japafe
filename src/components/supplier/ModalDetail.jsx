@@ -25,15 +25,15 @@ const ModalDetail = ({ valAksi }) => {
 
                   <div className='tw-mt-[6px]'>
                     <h6 className='tw-text-[16px] tw-text-[#EEEEEE] tw-font-[700]'>View {valAksi.sup_name} </h6>
-                    <h6 className='tw-text-[#EEEEEE] tw-font-[700] tw-text-sm tw-pt-[8px]'>Customer ID #{valAksi.id_suplier}</h6>
+                    <h6 className='tw-text-[#EEEEEE] tw-font-[700] tw-text-sm tw-pt-[8px]'>Supplier ID #{valAksi.id_suplier}</h6>
                   </div>
                   </div>
                 </div>
             <div className='modal-body tw-relative tw-py-2 tw-px-6 '>
               {/* //content */}
-              <h2 className='tw-text-[18px] tw-text-[#000000] tw-font-bold tw-pt-[15px]'>Customer</h2>
+              <h2 className='tw-text-[18px] tw-text-[#000000] tw-font-bold tw-pt-[15px]'>Supplier</h2>
               <div className='tw-flex tw-gap-2 tw-pt-[8px]'>
-                  <p className='tw-text-[#666666] tw-text-[14px] tw-font-[400]'>Customer Name :</p>
+                  <p className='tw-text-[#666666] tw-text-[14px] tw-font-[400]'>Supplier Name :</p>
                   <h6 className='tw-text-[#000000] tw-text-[14px] tw-font-semibold tw-translate-y-1'>{valAksi.sup_name}</h6>
               </div>
 
@@ -62,31 +62,6 @@ const ModalDetail = ({ valAksi }) => {
               </div>
 
               <h2 className='tw-text-[18px] tw-text-[#000000] tw-font-bold tw-pt-[15px]'>Contact Person</h2>
-              {/* <table class="table-fixed tw-mt-[28px]">
-                <thead>
-                  <tr>
-                    <th className='tw-w-[57px] tw-text-[#666666] tw-text-[14px] tw-font-[400]'>No</th>
-                    <th className='tw-w-[250px] tw-text-[#666666] tw-text-[14px] tw-font-[400]'>Contact Person</th>
-                    <th className='tw-w-[150px] tw-text-[#666666] tw-text-[14px] tw-font-[400]'>Phone</th>
-                    <th className='tw-text-[#666666] tw-text-[14px] tw-font-[400]'>Email</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {valAksi.cuskontak.map((val, id) => {
-                    return (
-                      <div>
-                      <tr >
-                        <td className='tw-text-[#666666] tw-text-[14px] tw-font-[400] tw-pt-[20px]'>{id+1}</td>
-                        <td className='tw-text-[#666666] tw-text-[14px] tw-font-[400] tw-pt-[20px]'>{val.contact_person}</td>
-                        <td className='tw-text-[#666666] tw-text-[14px] tw-font-[400] tw-pt-[20px]'>{val.contact_person_telp}</td>
-                        <td className='tw-text-[#666666] tw-text-[14px] tw-font-[400] tw-pt-[20px]'>{val.email_person}</td>
-                      </tr>
-                    </div>
-                    )
-                  })}
-                  
-                </tbody>
-              </table> */}
               <div className=' tw-mt-2 tw-overflow-x-auto'>
                   <table className='tw-w-full'>
                     <thead className='tw-bg-white'>

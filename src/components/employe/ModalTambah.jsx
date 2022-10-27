@@ -1,26 +1,73 @@
 import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react'
 import MyDatePicker from '../data_picker/MyDatePicker'
-import { MdDelete } from 'react-icons/md'
+import { MdDelete, MdEditNote } from 'react-icons/md'
 import { useFormik } from 'formik'
 import * as Yup from 'yup'
 import { useDispatch, useSelector } from 'react-redux'
 import { addEmployee, getEmployees } from '../../store/slices/employeeSlice'
+import PropTypes from 'prop-types';
+import Tabs from '@mui/material/Tabs';
+import Tab from '@mui/material/Tab';
+import Typography from '@mui/material/Typography';
+import Box from '@mui/material/Box';
+import PhoneInput from 'react-phone-input-2'
+import 'react-phone-input-2/lib/style.css'
+
 const phoneRegExp = /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/
 
-const ModalTambah = ({ token }) => {
+function TabPanel(props) {
+  const { children, value, index, ...other } = props;
+
+  return (
+    <div
+      role="tabpanel"
+      hidden={value !== index}
+      id={`simple-tabpanel-${index}`}
+      aria-labelledby={`simple-tab-${index}`}
+      {...other}
+    >
+      {value === index && (
+        <Box sx={{ p: 3 }}>
+          <Typography>{children}</Typography>
+        </Box>
+      )}
+    </div>
+  );
+}
+
+TabPanel.propTypes = {
+  children: PropTypes.node,
+  index: PropTypes.number.isRequired,
+  value: PropTypes.number.isRequired,
+};
+
+function a11yProps(index) {
+  return {
+    id: `simple-tab-${index}`,
+    'aria-controls': `simple-tabpanel-${index}`,
+  };
+}
+
+const ModalTambah = ({ token, listProvince, getCity, getDistricts, listOfCity, listOfDistricts, getSubDistrict, listOfSubDist, depart }) => {
+  
   const dispatch = useDispatch()
   const { success, isLoading, type } = useSelector(
     state => state.employeeSlice.resEmployee
   )
   const modalRef = useRef(null)
+  const [value, setValue] = React.useState(0);
+
+  const handleTabs = (event, newValue) => {
+    setValue(newValue);
+  };
 
   const formik = useFormik({
     initialValues: {
       id: '',
-      NIP: '',
+      nik: '',
       nickname: '',
       nama_karyawan: '',
-      departement: '',
+      departement_id: '',
       email: '',
       phone: '',
       tmptlahir: '',
@@ -33,14 +80,23 @@ const ModalTambah = ({ token }) => {
       kota: '',
       starjoin: '',
       sisa_cuti: '',
+      spouse_name: '',
+      jenis_kelamin_spouse: '',
+      tmpt_lahir_spouse: '',
+      tgllahir_spouse: '',
+      provinsi: '',
+      kecamatan: '',
+      kelurahan: '',
+      kodepos: '',
       emppen: [],
-      emppel: []
+      emppel: [],
+      empchild: []
     },
     validationSchema: Yup.object({
-      NIP: Yup.number().min(1, 'harus lebih 0').required('NIP is required'),
+      nik: Yup.number().min(1, 'harus lebih 0').required('nik is required'),
       nickname: Yup.string().required('Nickname is required'),
       nama_karyawan: Yup.string().required('Employee name is required'),
-      departement: Yup.string().required('Department is required'),
+      departement_id: Yup.string().required('Department is required'),
       phone: Yup.string()
         .matches(phoneRegExp, 'Phone number is not valid')
         .required('Phone is required'),
@@ -53,22 +109,57 @@ const ModalTambah = ({ token }) => {
       karyawan_status: Yup.string().required('Employee status is required'),
       jenis_kelamin: Yup.string().required('Gender status is required'),
       status: Yup.string().required('Maritial status is required'),
-      alamat: Yup.string().required('Adress is required'),
+      // alamat: Yup.string().required('Adress is required'),
       kota: Yup.string().required('City person is required'),
       starjoin: Yup.string().required('Start joining person is required'),
       sisa_cuti: Yup.number().required('Remaining Days Off is required'),
+      spouse_name: Yup.string(),
+      jenis_kelamin_spouse: Yup.string(),
+      tmpt_lahir_spouse: Yup.string(),
+      tgllahir_spouse: Yup.string(),
+      provinsi: Yup.string(),
+      kecamatan: Yup.string(),
+      kelurahan: Yup.string(),
+      kodepos: Yup.string(),
       emppen: Yup.array().min(1, 'Education is required'),
     }),
     onSubmit: values => {
-      console.log(token)
-      console.log(values)
+      console.log("Sending data", values)
       dispatch(addEmployee({ data: values, token: token }))
     }
   })
 
+  const formikFam = useFormik({
+    initialValues: {
+      name_child: '',
+      jenis_kelamin: '',
+      tmpt_lahir: '',
+      tgllahir: ''
+    },
+    validationSchema: Yup.object({
+      name_child: Yup.string(),
+      jenis_kelamin: Yup.string(),
+      tmpt_lahir: Yup.string(),
+      tgllahir: Yup.string(),
+    }),
+    onSubmit: values => {
+      formik.setValues(val => ({
+        ...val,
+        empchild: val.empchild.concat(values)
+      }))
+      formikFam.resetForm()
+    }
+  })
+
+  const removeFam = idx => {
+    formik.setValues((val) => ({
+      ...val,
+      empchild: [...val.empchild.slice(0, idx), ...val.empchild.slice(idx + 1, val.empchild.length)]
+    }))
+  }
+
   const formikEdu = useFormik({
     initialValues: {
-      no: '',
       jns_pndidikan: '',
       nama_sekolah: '',
       thun_lulus: ''
@@ -89,7 +180,6 @@ const ModalTambah = ({ token }) => {
 
   const formikCert = useFormik({
     initialValues: {
-      no: '',
       jns_pelatihan: '',
       ket: '',
       wktu_selesai: '',
@@ -137,6 +227,49 @@ const ModalTambah = ({ token }) => {
     }
   }, [success])
 
+  const handleProvince = (e) => {
+    formik.setValues((val) => ({
+      ...val,
+      provinsi : e.target.value
+    }))
+
+    for (let node of e.target.children) {
+      if (node.value === e.target.value) {
+        getCity(node.getAttribute('data-id'))
+        return;
+      }
+    }
+  }
+
+  const handleCity = (e) => {
+    formik.setValues((val) => ({
+      ...val,
+      kota : e.target.value
+    }))
+
+    for (let node of e.target.children) {
+      if (node.value === e.target.value) {
+        getDistricts(node.getAttribute('data-id'))
+        return;
+      }
+    }
+  }
+
+  const handleDistrict = (e) => {
+    formik.setValues((val) => ({
+      ...val,
+      kecamatan : e.target.value
+    }))
+
+    for (let node of e.target.children) {
+      if (node.value === e.target.value) {
+        getSubDistrict(node.getAttribute('data-id'))
+        console.log(node.getAttribute('data-id'));
+        return;
+      }
+    }
+  }
+
   return (
     <React.Fragment>
       <div
@@ -150,43 +283,18 @@ const ModalTambah = ({ token }) => {
       >
         <div className='modal-dialog modal-lg modal-dialog-scrollable tw-relative tw-w-auto tw-pointer-events-none'>
           <div className='modal-content tw-border-none tw-shadow-lg tw-relative tw-flex tw-flex-col tw-w-full tw-pointer-events-auto tw-bg-white tw-bg-clip-padding tw-rounded tw-outline-none tw-text-current'>
-            <div className='modal-header tw-flex tw-flex-shrink-0 tw-items-center tw-justify-between tw-py-2 tw-px-6 tw-border-b tw-border-gray-200 tw-rounded-t'>
-              <h5
-                className='tw-text-xl tw-font-medium tw-leading-normal tw-text-gray-800'
-                id='exampleModalLabel'
-              >
-                Add Form
-              </h5>
-              <ul class="nav nav-tabs tw-flex tw-flex-row tw-flex-wrap tw-list-none tw-border-b-0 tw-pl-0" id="tabs-tab"
-                role="tablist">
-                <li class="nav-item" role="presentation">
-                  <a href="#tabs-employe" class="nav-link tw-block tw-font-bold tw-text-xs tw-leading-tight tw-border-x-0 tw-border-t-0 tw-border-transparent tw-px-3 tw-py-2 tw-my-0 hover:tw-border-transparent hover:tw-bg-gray-100 focus:tw-border-transparent active"
-                    id="tabs-employe-tab"
-                    data-bs-toggle="pill"
-                    data-bs-target="#tabs-employe"
-                    role="tab"
-                    aria-controls="tabs-employe"
-                    aria-selected="true">Employe</a>
-                </li>
-                <li class="nav-item" role="presentation">
-                  <a href="#tabs-edu" class="nav-link tw-block tw-font-bold tw-text-xs tw-leading-tight tw-border-x-0 tw-border-t-0 tw-border-transparent tw-px-3 tw-py-2 tw-my-0 hover:tw-border-transparent hover:tw-bg-gray-100 focus:tw-border-transparent"
-                    id="tabs-edu-tab"
-                    data-bs-toggle="pill"
-                    data-bs-target="#tabs-edu"
-                    role="tab"
-                    aria-controls="tabs-edu"
-                    aria-selected="false">Education</a>
-                </li>
-                <li class="nav-item" role="presentation">
-                  <a href="#tabs-cert" class="nav-link tw-block tw-font-bold tw-text-xs tw-leading-tight tw-border-x-0 tw-border-t-0 tw-border-transparent tw-px-3 tw-py-2 tw-my-0 hover:tw-border-transparent hover:tw-bg-gray-100 focus:tw-border-transparent"
-                    id="tabs-cert-tab"
-                    data-bs-toggle="pill"
-                    data-bs-target="#tabs-cert"
-                    role="tab"
-                    aria-controls="tabs-cert"
-                    aria-selected="false">Certification</a>
-                </li>
-              </ul>
+            <div className='modal-header tw-bg-[#66B6FF] tw-h-[60px] tw-flex tw-flex-shrink-0 tw-items-center tw-justify-between tw-py-2 tw-px-6'>
+              <div className='tw-flex tw-gap-1'>
+                  <div className='tw-bg-[#FFFFFF] tw-rounded-full tw-p-[10.97px] tw-w-[41.44px] tw-h-[40px] tw-text-[#66B6FF] '>
+                    <MdEditNote size={20}/>
+                  </div>
+                  <h5
+                    className='tw-text-[16px] tw-font-bold tw-leading-normal tw-text-[#FFFFFF] tw-translate-y-2'
+                    id='exampleModalLabel'
+                  >
+                    Add new employee
+                  </h5>
+                </div>
               {/* <button
                 onClick={() => {
                   formik.resetForm({ values: '' })
@@ -203,33 +311,39 @@ const ModalTambah = ({ token }) => {
               ref={modalRef}
               className='modal-body tw-relative tw-py-2 tw-px-6'
             >
-              {/* //content */}
+              <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+                <Tabs value={value} onChange={handleTabs} aria-label="basic tabs example">
+                  <Tab label="Employee" {...a11yProps(0)} />
+                  <Tab label="Education" {...a11yProps(1)} />
+                  <Tab label="Certificate" {...a11yProps(2)} />
+                  <Tab label="Family" {...a11yProps(3)} />
+                </Tabs>
+              </Box>
               <form>
-                <div class="tab-content" id="tabs-tabContent">
-                  <div class="tab-pane fade show active" id="tabs-employe" role="tabpanel" aria-labelledby="tabs-employe-tab">
+                <TabPanel value={value} index={0}>
                     <div className='tw-form-group tw-mb-2'>
                       <label
                         htmlFor='exampleInputEmail2'
                         className='tw-form-label tw-text-sm tw-font-bold tw-inline-block tw-mb-2 tw-text-gray-700'
                       >
-                        NIP
+                        NIK
                       </label>
                       <div className='tw-relative'>
                         <input
                           onChange={formik.handleChange}
-                          value={formik.values.NIP}
+                          value={formik.values.nik}
                           type='number'
                           min={0}
-                          className={`${formik.touched.NIP && formik.errors.NIP
+                          className={`${formik.touched.nik && formik.errors.nik
                             ? `tw-border-red-500`
                             : `tw-border-gray-300`
                             } tw-form-control tw-block tw-w-full tw-px-3 tw-py-2 tw-text-sm tw-font-normal  tw-text-gray-700 tw-bg-white tw-bg-clip-padding tw-border tw-border-solid tw-rounded tw-transition tw-ease-in-out tw-m-0 focus:tw-text-gray-700 focus:tw-bg-white focus:tw-border-sky-600 focus:tw-outline-none`}
-                          id='NIP'
-                          placeholder='NIP'
+                          id='nik'
+                          placeholder='nik'
                         />
-                        {formik.touched.NIP && formik.errors.NIP && (
+                        {formik.touched.nik && formik.errors.nik && (
                           <p className='tw-absolute tw-text-red-500 -tw-top-4 tw-right-0 tw-m-0 tw-text-xs'>
-                            {formik.errors.NIP}
+                            {formik.errors.nik}
                           </p>
                         )}
                       </div>
@@ -251,7 +365,7 @@ const ModalTambah = ({ token }) => {
                             : `tw-border-gray-300`
                             } tw-form-control tw-block tw-w-full tw-px-3 tw-py-2 tw-text-sm tw-font-normal  tw-text-gray-700 tw-bg-white tw-bg-clip-padding tw-border tw-border-solid tw-rounded tw-transition tw-ease-in-out tw-m-0 focus:tw-text-gray-700 focus:tw-bg-white focus:tw-border-sky-600 focus:tw-outline-none`}
                           id='nickname'
-                          placeholder='Employee name'
+                          placeholder='Nickname'
                         />
                         {formik.touched.nickname && formik.errors.nickname && (
                           <p className='tw-absolute tw-text-red-500 -tw-top-4 tw-right-0 tw-m-0 tw-text-xs'>
@@ -289,54 +403,180 @@ const ModalTambah = ({ token }) => {
                           )}
                       </div>
                     </div>
-                    <div className='form-group mb-2'>
-                      <label
-                        htmlFor='exampleInputEmail2'
-                        className='tw-form-label tw-text-sm tw-font-bold tw-inline-block tw-mb-2 tw-text-gray-700'
-                      >
-                        Adress
-                      </label>
-                      <div className='tw-relative'>
-                        <input
-                          onChange={formik.handleChange}
-                          value={formik.values.alamat}
-                          type='text'
-                          className={`${formik.touched.alamat && formik.errors.alamat
-                            ? `tw-border-red-500`
-                            : `tw-border-gray-300`
-                            } tw-form-control tw-block tw-w-full tw-px-3 tw-py-2 tw-text-sm tw-font-normal  tw-text-gray-700 tw-bg-white tw-bg-clip-padding tw-border tw-border-solid tw-rounded tw-transition tw-ease-in-out tw-m-0 focus:tw-text-gray-700 focus:tw-bg-white focus:tw-border-sky-600 focus:tw-outline-none`}
-                          id='alamat'
-                          placeholder='Adress'
-                        />
-                        {formik.touched.alamat && formik.errors.alamat && (
-                          <p className='tw-absolute tw-text-red-500 -tw-top-4 tw-right-0 tw-m-0 tw-text-xs'>
-                            {formik.errors.alamat}
-                          </p>
-                        )}
+                    {/* place here */}
+                    <div className='tw-flex tw-gap-6'>
+                      <div className='tw-form-group tw-mb-2 tw-w-1/2'>
+                        <label
+                          htmlFor='exampleInputEmail2'
+                          className='tw-form-label tw-text-sm tw-font-bold tw-inline-block tw-mb-2 tw-text-gray-700'
+                        >
+                          Province
+                        </label>
+                        <div className='tw-relative'>
+                          <select
+                            onChange={handleProvince}
+                            value={formik.values.provinsi}
+                            id='provinsi'
+                            className={`${formik.touched.provinsi &&
+                              formik.errors.provinsi
+                              ? `tw-border-red-500`
+                              : `tw-border-gray-300`
+                              } tw-form-control tw-block tw-w-full tw-px-3 tw-py-2 tw-text-sm tw-font-normal  tw-text-gray-700 tw-bg-white tw-bg-clip-padding tw-border tw-border-solid tw-rounded tw-transition tw-ease-in-out tw-m-0 focus:tw-text-gray-700 focus:tw-bg-white focus:tw-border-sky-600 focus:tw-outline-none`}
+                            aria-label='Default select example'
+                          >
+                            <option value='' disabled>
+                              Select Province
+                            </option>
+                            {listProvince.data.map((val, id) => {
+                              return (
+                                <option key={id} data-id={val.prov_id} value={val.prov_name}>{val.prov_name}</option>
+                              )
+                            })}
+                            
+                          </select>
+                          {formik.touched.provinsi &&
+                            formik.errors.provinsi && (
+                              <p className='tw-absolute tw-text-red-500 -tw-top-4 tw-right-0 tw-m-0 tw-text-xs'>
+                                {formik.errors.provinsi}
+                              </p>
+                            )}
+                        </div>
+                      </div>
+                      <div className='tw-form-group tw-mb-2 tw-w-1/2'>
+                        <label
+                          htmlFor='exampleInputEmail2'
+                          className='tw-form-label tw-text-sm tw-font-bold tw-inline-block tw-mb-2 tw-text-gray-700'
+                        >
+                          City
+                        </label>
+                        <div className='tw-relative'>
+                          <select
+                            onChange={handleCity}
+                            value={formik.values.kota}
+                            id='kota'
+                            className={`${formik.touched.kota && formik.errors.kota
+                              ? `tw-border-red-500`
+                              : `tw-border-gray-300`
+                              } tw-form-control tw-block tw-w-full tw-px-3 tw-py-2 tw-text-sm tw-font-normal  tw-text-gray-700 tw-bg-white tw-bg-clip-padding tw-border tw-border-solid tw-rounded tw-transition tw-ease-in-out tw-m-0 focus:tw-text-gray-700 focus:tw-bg-white focus:tw-border-sky-600 focus:tw-outline-none`}
+                            aria-label='Default select example'
+                          >
+                            <option value='' disabled>
+                              Select City
+                            </option>
+                            {listOfCity.data.map((val, id) => {
+                              return (
+                                <option key={id} data-id={val.city_id} value={val.city_name}>{val.city_name}</option>
+                              )
+                            })}
+                            
+                          </select>
+                          {formik.touched.kota && formik.errors.kota && (
+                            <p className='tw-absolute tw-text-red-500 -tw-top-4 tw-right-0 tw-m-0 tw-text-xs'>
+                              {formik.errors.kota}
+                            </p>
+                          )}
+                        </div>
                       </div>
                     </div>
+
+                    <div className='tw-flex tw-gap-6'>
+                      <div className='tw-form-group tw-mb-2 tw-w-1/2'>
+                        <label
+                          htmlFor='exampleInputEmail2'
+                          className='tw-form-label tw-text-sm tw-font-bold tw-inline-block tw-mb-2 tw-text-gray-700'
+                        >
+                          District
+                        </label>
+                        <div className='tw-relative'>
+                          <select
+                            onChange={handleDistrict}
+                            value={formik.values.kecamatan}
+                            id='provinsi'
+                            className={`${formik.touched.kecamatan &&
+                              formik.errors.kecamatan
+                              ? `tw-border-red-500`
+                              : `tw-border-gray-300`
+                              } tw-form-control tw-block tw-w-full tw-px-3 tw-py-2 tw-text-sm tw-font-normal  tw-text-gray-700 tw-bg-white tw-bg-clip-padding tw-border tw-border-solid tw-rounded tw-transition tw-ease-in-out tw-m-0 focus:tw-text-gray-700 focus:tw-bg-white focus:tw-border-sky-600 focus:tw-outline-none`}
+                            aria-label='Default select example'
+                          >
+                            <option value='' disabled>
+                              Select Province
+                            </option>
+                            {listOfDistricts.data.map((val, id) => {
+                              return (
+                                <option key={id} data-id={val.dis_id} value={val.dis_name}>{val.dis_name}</option>
+                              )
+                            })}
+                            
+                          </select>
+                          {formik.touched.kecamatan &&
+                            formik.errors.kecamatan && (
+                              <p className='tw-absolute tw-text-red-500 -tw-top-4 tw-right-0 tw-m-0 tw-text-xs'>
+                                {formik.errors.kecamatan}
+                              </p>
+                            )}
+                        </div>
+                      </div>
+                      <div className='tw-form-group tw-mb-2 tw-w-1/2'>
+                        <label
+                          htmlFor='exampleInputEmail2'
+                          className='tw-form-label tw-text-sm tw-font-bold tw-inline-block tw-mb-2 tw-text-gray-700'
+                        >
+                          Sub District
+                        </label>
+                        <div className='tw-relative'>
+                          <select
+                            onChange={formik.handleChange}
+                            value={formik.values.kelurahan}
+                            id='kelurahan'
+                            className={`${formik.touched.kelurahan && formik.errors.kelurahan
+                              ? `tw-border-red-500`
+                              : `tw-border-gray-300`
+                              } tw-form-control tw-block tw-w-full tw-px-3 tw-py-2 tw-text-sm tw-font-normal  tw-text-gray-700 tw-bg-white tw-bg-clip-padding tw-border tw-border-solid tw-rounded tw-transition tw-ease-in-out tw-m-0 focus:tw-text-gray-700 focus:tw-bg-white focus:tw-border-sky-600 focus:tw-outline-none`}
+                            aria-label='Default select example'
+                          >
+                            <option value='' disabled>
+                              Select City
+                            </option>
+                            {listOfSubDist.data.map((val, id) => {
+                              console.log(val);
+                              return (
+                                <option key={id} data-id={val.subdis_id} value={val.subdis_name}>{val.subdis_name}</option>
+                              )
+                            })}
+                            
+                          </select>
+                          {formik.touched.kelurahan && formik.errors.kelurahan && (
+                            <p className='tw-absolute tw-text-red-500 -tw-top-4 tw-right-0 tw-m-0 tw-text-xs'>
+                              {formik.errors.kelurahan}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+
                     <div className='form-group mb-2'>
                       <label
                         htmlFor='exampleInputEmail2'
                         className='tw-form-label tw-text-sm tw-font-bold tw-inline-block tw-mb-2 tw-text-gray-700'
                       >
-                        City
+                        Postal Code
                       </label>
                       <div className='tw-relative'>
                         <input
                           onChange={formik.handleChange}
-                          value={formik.values.kota}
+                          value={formik.values.kodepos}
                           type='text'
-                          className={`${formik.touched.kota && formik.errors.kota
+                          className={`${formik.touched.kodepos && formik.errors.kodepos
                             ? `tw-border-red-500`
                             : `tw-border-gray-300`
                             } tw-form-control tw-block tw-w-full tw-px-3 tw-py-2 tw-text-sm tw-font-normal  tw-text-gray-700 tw-bg-white tw-bg-clip-padding tw-border tw-border-solid tw-rounded tw-transition tw-ease-in-out tw-m-0 focus:tw-text-gray-700 focus:tw-bg-white focus:tw-border-sky-600 focus:tw-outline-none`}
-                          id='kota'
-                          placeholder='City'
+                          id='kodepos'
+                          placeholder='Postal Code'
                         />
-                        {formik.touched.kota && formik.errors.kota && (
+                        {formik.touched.kodepos && formik.errors.kodepos && (
                           <p className='tw-absolute tw-text-red-500 -tw-top-4 tw-right-0 tw-m-0 tw-text-xs'>
-                            {formik.errors.kota}
+                            {formik.errors.kodepos}
                           </p>
                         )}
                       </div>
@@ -473,25 +713,27 @@ const ModalTambah = ({ token }) => {
                       <div className='tw-relative'>
                         <select
                           onChange={formik.handleChange}
-                          value={formik.values.departement}
-                          id='departement'
-                          className={`${formik.touched.departement && formik.errors.departement
+                          value={formik.values.departement_id}
+                          id='departement_id'
+                          className={`${formik.touched.departement_id && formik.errors.departement_id
                             ? `tw-border-red-500`
                             : `tw-border-gray-300`
                             } tw-form-control tw-block tw-w-full tw-px-3 tw-py-2 tw-text-sm tw-font-normal  tw-text-gray-700 tw-bg-white tw-bg-clip-padding tw-border tw-border-solid tw-rounded tw-transition tw-ease-in-out tw-m-0 focus:tw-text-gray-700 focus:tw-bg-white focus:tw-border-sky-600 focus:tw-outline-none`}
                           aria-label='Default select example'
                         >
                           <option value='' disabled>
-                            Pilih Department
+                            Select Department
                           </option>
-                          <option value='1'>One</option>
-                          <option value='2'>Two</option>
-                          <option value='3'>Three</option>
+                          {depart.result.map((val) => {
+                            return (
+                              <option value={val.id}>{val.namadep}</option>
+                            )
+                          })}
                         </select>
-                        {formik.touched.departement &&
-                          formik.errors.departement && (
+                        {formik.touched.departement_id &&
+                          formik.errors.departement_id && (
                             <p className='tw-absolute tw-text-red-500 -tw-top-4 tw-right-0 tw-m-0 tw-text-xs'>
-                              {formik.errors.departement}
+                              {formik.errors.departement_id}
                             </p>
                           )}
                       </div>
@@ -663,15 +905,14 @@ const ModalTambah = ({ token }) => {
                         </div>
                       </div>
                     </div>
-                  </div>
-
-                  <div class="tab-pane fade" id="tabs-edu" role="tabpanel" aria-labelledby="tabs-edu-tab">
-                    <div className='form-group mb-2'>
+                </TabPanel>
+                <TabPanel value={value} index={1}>
+                    <div className='form-group mb-2 tw-mt-[14px]'>
                       <label
                         htmlFor='exampleInputEmail2'
                         className='tw-form-label tw-text-sm tw-font-bold tw-inline-block tw-mb-2 tw-text-gray-700'
                       >
-                        Status
+                        Education Level
                       </label>
                       <div className='tw-relative'>
                         <select
@@ -685,7 +926,7 @@ const ModalTambah = ({ token }) => {
                           aria-label='Default select example'
                         >
                           <option value='' disabled>
-                            Pilih Status
+                            Select Education Level
                           </option>
                           <option value='SD'>SD</option>
                           <option value='SMP'>SMP</option>
@@ -731,7 +972,7 @@ const ModalTambah = ({ token }) => {
                         htmlFor='exampleInputEmail2'
                         className='tw-form-label tw-text-sm tw-font-bold tw-inline-block tw-mb-2 tw-text-gray-700'
                       >
-                        Birth date / Guardiation
+                        Graduation Date
                       </label>
                       <div className='tw-relative'>
                         <input
@@ -743,7 +984,7 @@ const ModalTambah = ({ token }) => {
                             : `tw-border-gray-300`
                             } tw-form-control tw-block tw-w-full tw-px-3 tw-py-2 tw-text-sm tw-font-normal  tw-text-gray-700 tw-bg-white tw-bg-clip-padding tw-border tw-border-solid tw-rounded tw-transition tw-ease-in-out tw-m-0 focus:tw-text-gray-700 focus:tw-bg-white focus:tw-border-sky-600 focus:tw-outline-none`}
                           id='thun_lulus'
-                          placeholder='Birth date / Guardiation'
+                          placeholder='Graduation Date'
                         />
                         {formikEdu.touched.thun_lulus && formikEdu.errors.thun_lulus && (
                           <p className='tw-absolute tw-text-red-500 -tw-top-4 tw-right-0 tw-m-0 tw-text-xs'>
@@ -753,13 +994,15 @@ const ModalTambah = ({ token }) => {
                       </div>
                     </div>
                     <div className="tw-relative">
+                    <div className="tw-relative">
                       <button
                         onClick={formikEdu.handleSubmit}
                         type='button'
-                        className='hover:tw-bg-red-600 tw-inline-block tw-px-6 tw-py-2 tw-bg-red-500 tw-text-white tw-font-bold tw-text-xs tw-rounded tw-duration-150 tw-ease-in-out'
+                        className='tw-text-[#66B6FF] tw-text-sm tw-font-medium'
                       >
-                        Add
+                        + Add new education 
                       </button>
+                    </div>
                     </div>
                     {formik.values.emppen.length > 0 && (
                       <div className=' tw-mt-2 tw-px-6 tw-overflow-x-auto'>
@@ -835,16 +1078,14 @@ const ModalTambah = ({ token }) => {
                         </table>
                       </div>
                     )}
-                  </div>
-
-
-                  <div class="tab-pane fade" id="tabs-cert" role="tabpanel" aria-labelledby="tabs-cert-tab">
-                    <div className='form-group mb-2'>
+                </TabPanel>
+                <TabPanel value={value} index={2}>
+                    {/* <div className='form-group mb-2'>
                       <label
                         htmlFor='exampleInputEmail2'
                         className='tw-form-label tw-text-sm tw-font-bold tw-inline-block tw-mb-2 tw-text-gray-700'
                       >
-                        Status
+                        Training Type
                       </label>
                       <div className='tw-relative'>
                         <select
@@ -866,6 +1107,32 @@ const ModalTambah = ({ token }) => {
                           <option value='D3'>D3</option>
                           <option value='S1'>S1</option>
                         </select>
+                        {formikCert.touched.jns_pelatihan && formikCert.errors.jns_pelatihan && (
+                          <p className='tw-absolute tw-text-red-500 -tw-top-4 tw-right-0 tw-m-0 tw-text-xs'>
+                            {formikCert.errors.jns_pelatihan}
+                          </p>
+                        )}
+                      </div>
+                    </div> */}
+                    <div className='form-group mb-2'>
+                      <label
+                        htmlFor='exampleInputEmail2'
+                        className='tw-form-label tw-text-sm tw-font-bold tw-inline-block tw-mb-2 tw-text-gray-700'
+                      >
+                        Certification Type
+                      </label>
+                      <div className='tw-relative'>
+                        <input
+                          onChange={formikCert.handleChange}
+                          value={formikCert.values.jns_pelatihan}
+                          type='text'
+                          className={`${formikCert.touched.jns_pelatihan && formikCert.errors.jns_pelatihan
+                            ? `tw-border-red-500`
+                            : `tw-border-gray-300`
+                            } tw-form-control tw-block tw-w-full tw-px-3 tw-py-2 tw-text-sm tw-font-normal  tw-text-gray-700 tw-bg-white tw-bg-clip-padding tw-border tw-border-solid tw-rounded tw-transition tw-ease-in-out tw-m-0 focus:tw-text-gray-700 focus:tw-bg-white focus:tw-border-sky-600 focus:tw-outline-none`}
+                          id='jns_pelatihan'
+                          placeholder='Certification Type'
+                        />
                         {formikCert.touched.jns_pelatihan && formikCert.errors.jns_pelatihan && (
                           <p className='tw-absolute tw-text-red-500 -tw-top-4 tw-right-0 tw-m-0 tw-text-xs'>
                             {formikCert.errors.jns_pelatihan}
@@ -946,13 +1213,15 @@ const ModalTambah = ({ token }) => {
                         }
                       </div>
                     </div>
-                    <button
-                      onClick={formikCert.handleSubmit}
-                      type='button'
-                      className='hover:tw-bg-red-600 tw-inline-block tw-px-6 tw-py-2 tw-bg-red-500 tw-text-white tw-font-bold tw-text-xs tw-rounded tw-duration-150 tw-ease-in-out'
-                    >
-                      Add
-                    </button>
+                    <div className="tw-relative">
+                      <button
+                        onClick={formikCert.handleSubmit}
+                        type='button'
+                        className='tw-text-[#66B6FF] tw-text-sm tw-font-medium'
+                      >
+                        + Add new certificate 
+                      </button>
+                    </div>
                     {formik.values.emppel.length > 0 && (
                       <div className=' tw-mt-2 tw-px-6 tw-overflow-x-auto'>
                         <table className='tw-max-w-[735px]'>
@@ -1036,8 +1305,327 @@ const ModalTambah = ({ token }) => {
                         </table>
                       </div>
                     )}
-                  </div>
-                </div>
+                </TabPanel>
+                {/* is family */}
+                <TabPanel value={value} index={3}>
+                    <h3 className='tw-text-[#000000] tw-text-[20px] tw-font-semibold tw-mt-[24px]'>Spouse</h3>
+                    <div className='form-group mb-2 tw-mt-[14px]'>
+                      <label
+                        htmlFor='exampleInputEmail2'
+                        className='tw-form-label tw-text-sm tw-font-bold tw-inline-block tw-mb-2 tw-text-gray-700'
+                      >
+                        Spouse Name
+                      </label>
+                      <div className='tw-relative'>
+                        <input
+                          onChange={formik.handleChange}
+                          value={formik.values.spouse_name}
+                          type='text'
+                          className={`${formik.touched.spouse_name && formik.errors.spouse_name
+                            ? `tw-border-red-500`
+                            : `tw-border-gray-300`
+                            } tw-form-control tw-block tw-w-full tw-px-3 tw-py-2 tw-text-sm tw-font-normal  tw-text-gray-700 tw-bg-white tw-bg-clip-padding tw-border tw-border-solid tw-rounded tw-transition tw-ease-in-out tw-m-0 focus:tw-text-gray-700 focus:tw-bg-white focus:tw-border-sky-600 focus:tw-outline-none`}
+                          id='spouse_name'
+                          placeholder='Spouse Name'
+                        />
+                        {formik.touched.spouse_name && formik.errors.spouse_name && (
+                          <p className='tw-absolute tw-text-red-500 -tw-top-4 tw-right-0 tw-m-0 tw-text-xs'>
+                            {formik.errors.spouse_name}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                    <div className='form-group mb-2'>
+                      <label
+                        htmlFor='exampleInputEmail2'
+                        className='tw-form-label tw-text-sm tw-font-bold tw-inline-block tw-mb-2 tw-text-gray-700'
+                      >
+                        Gender
+                      </label>
+                      <div className='tw-relative'>
+                        <select
+                          id='jns_pndidikan'
+                          onChange={formikEdu.handleChange}
+                          value={formik.values.jenis_kelamin_spouse}
+                          className={`${formik.touched.jenis_kelamin_spouse && formik.errors.jenis_kelamin_spouse
+                            ? `tw-border-red-500`
+                            : `tw-border-gray-300`
+                            } tw-form-control tw-block tw-w-full tw-px-3 tw-py-2 tw-text-sm tw-font-normal  tw-text-gray-700 tw-bg-white tw-bg-clip-padding tw-border tw-border-solid tw-rounded tw-transition tw-ease-in-out tw-m-0 focus:tw-text-gray-700 focus:tw-bg-white focus:tw-border-sky-600 focus:tw-outline-none`}
+                          aria-label='Default select example'
+                        >
+                          <option value='' disabled>
+                            Pilih Status
+                          </option>
+                          <option value='Perempuan'>Female</option>
+                          <option value='Laki-Laki'>Male</option>
+                        </select>
+                        {formik.touched.jenis_kelamin_spouse && formik.errors.jenis_kelamin_spouse && (
+                          <p className='tw-absolute tw-text-red-500 -tw-top-4 tw-right-0 tw-m-0 tw-text-xs'>
+                            {formik.errors.jenis_kelamin_spouse}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                    <div className='form-group mb-2'>
+                      <label
+                        htmlFor='exampleInputEmail2'
+                        className='tw-form-label tw-text-sm tw-font-bold tw-inline-block tw-mb-2 tw-text-gray-700'
+                      >
+                        Birthplace
+                      </label>
+                      <div className='tw-relative'>
+                        <input
+                          onChange={formik.handleChange}
+                          value={formik.values.tmpt_lahir_spouse}
+                          type='text'
+                          className={`${formik.touched.tmpt_lahir_spouse && formik.errors.tmpt_lahir_spouse
+                            ? `tw-border-red-500`
+                            : `tw-border-gray-300`
+                            } tw-form-control tw-block tw-w-full tw-px-3 tw-py-2 tw-text-sm tw-font-normal  tw-text-gray-700 tw-bg-white tw-bg-clip-padding tw-border tw-border-solid tw-rounded tw-transition tw-ease-in-out tw-m-0 focus:tw-text-gray-700 focus:tw-bg-white focus:tw-border-sky-600 focus:tw-outline-none`}
+                          id='tmpt_lahir_spouse'
+                          placeholder='Spouse Birthplace'
+                        />
+                        {formik.touched.tmpt_lahir_spouse && formik.errors.tmpt_lahir_spouse && (
+                          <p className='tw-absolute tw-text-red-500 -tw-top-4 tw-right-0 tw-m-0 tw-text-xs'>
+                            {formik.errors.tmpt_lahir_spouse}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                    <div className='form-group mb-2'>
+                      <label
+                        htmlFor='exampleInputEmail2'
+                        className='tw-form-label tw-text-sm tw-font-bold tw-inline-block tw-mb-2 tw-text-gray-700'
+                      >
+                        Birthday
+                      </label>
+                      <div className='tw-relative'>
+                        <input
+                          onChange={formik.handleChange}
+                          value={formik.values.tgllahir_spouse}
+                          type='date'
+                          className={`${formik.touched.tgllahir_spouse && formik.errors.tgllahir_spouse
+                            ? `tw-border-red-500`
+                            : `tw-border-gray-300`
+                            } tw-form-control tw-block tw-w-full tw-px-3 tw-py-2 tw-text-sm tw-font-normal  tw-text-gray-700 tw-bg-white tw-bg-clip-padding tw-border tw-border-solid tw-rounded tw-transition tw-ease-in-out tw-m-0 focus:tw-text-gray-700 focus:tw-bg-white focus:tw-border-sky-600 focus:tw-outline-none`}
+                          id='tgllahir_spouse'
+                          placeholder='Birthday'
+                        />
+                        {formik.touched.tgllahir_spouse && formik.errors.tgllahir_spouse && (
+                          <p className='tw-absolute tw-text-red-500 -tw-top-4 tw-right-0 tw-m-0 tw-text-xs'>
+                            {formik.errors.tgllahir_spouse}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                    
+                    {/* remake */}
+                    <h3 className='tw-text-[#000000] tw-text-[20px] tw-font-semibold tw-pt-[24px]'>Child</h3>
+                    <div className='form-group mb-2 tw-mt-[14px]'>
+                      <label
+                        htmlFor='exampleInputEmail2'
+                        className='tw-form-label tw-text-sm tw-font-bold tw-inline-block tw-mb-2 tw-text-gray-700'
+                      >
+                        Child Name
+                      </label>
+                      <div className='tw-relative'>
+                        <input
+                          onChange={formikFam.handleChange}
+                          value={formikFam.values.name_child}
+                          type='text'
+                          className={`${formikFam.touched.name_child && formikFam.errors.name_child
+                            ? `tw-border-red-500`
+                            : `tw-border-gray-300`
+                            } tw-form-control tw-block tw-w-full tw-px-3 tw-py-2 tw-text-sm tw-font-normal  tw-text-gray-700 tw-bg-white tw-bg-clip-padding tw-border tw-border-solid tw-rounded tw-transition tw-ease-in-out tw-m-0 focus:tw-text-gray-700 focus:tw-bg-white focus:tw-border-sky-600 focus:tw-outline-none`}
+                          id='name_child'
+                          placeholder='Child Name'
+                        />
+                        {formikFam.touched.name_child && formikFam.errors.name_child && (
+                          <p className='tw-absolute tw-text-red-500 -tw-top-4 tw-right-0 tw-m-0 tw-text-xs'>
+                            {formikFam.errors.name_child}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className='form-group mb-2'>
+                      <label
+                        htmlFor='exampleInputEmail2'
+                        className='tw-form-label tw-text-sm tw-font-bold tw-inline-block tw-mb-2 tw-text-gray-700'
+                      >
+                        Gender
+                      </label>
+                      <div className='tw-relative'>
+                        <select
+                          id='jenis_kelamin'
+                          onChange={formikFam.handleChange}
+                          value={formikFam.values.jenis_kelamin}
+                          className={`${formikFam.touched.jenis_kelamin && formikFam.errors.jenis_kelamin
+                            ? `tw-border-red-500`
+                            : `tw-border-gray-300`
+                            } tw-form-control tw-block tw-w-full tw-px-3 tw-py-2 tw-text-sm tw-font-normal  tw-text-gray-700 tw-bg-white tw-bg-clip-padding tw-border tw-border-solid tw-rounded tw-transition tw-ease-in-out tw-m-0 focus:tw-text-gray-700 focus:tw-bg-white focus:tw-border-sky-600 focus:tw-outline-none`}
+                          aria-label='Default select example'
+                        >
+                          <option value='' disabled>
+                            Select Gender
+                          </option>
+                          <option value='Perempuan'>Female</option>
+                          <option value='Laki-Laki'>Male</option>
+                        </select>
+                        {formikFam.touched.jenis_kelamin && formikFam.errors.jenis_kelamin && (
+                          <p className='tw-absolute tw-text-red-500 -tw-top-4 tw-right-0 tw-m-0 tw-text-xs'>
+                            {formikFam.errors.jenis_kelamin}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                    <div className='form-group mb-2 tw-mt-[14px]'>
+                      <label
+                        htmlFor='exampleInputEmail2'
+                        className='tw-form-label tw-text-sm tw-font-bold tw-inline-block tw-mb-2 tw-text-gray-700'
+                      >
+                        Birthplace
+                      </label>
+                      <div className='tw-relative'>
+                        <input
+                          onChange={formikFam.handleChange}
+                          value={formikFam.values.tmpt_lahir}
+                          type='text'
+                          className={`${formikFam.touched.tmpt_lahir && formikFam.errors.tmpt_lahir
+                            ? `tw-border-red-500`
+                            : `tw-border-gray-300`
+                            } tw-form-control tw-block tw-w-full tw-px-3 tw-py-2 tw-text-sm tw-font-normal  tw-text-gray-700 tw-bg-white tw-bg-clip-padding tw-border tw-border-solid tw-rounded tw-transition tw-ease-in-out tw-m-0 focus:tw-text-gray-700 focus:tw-bg-white focus:tw-border-sky-600 focus:tw-outline-none`}
+                          id='tmpt_lahir'
+                          placeholder='Birthplace'
+                        />
+                        {formikFam.touched.tmpt_lahir && formikFam.errors.tmpt_lahir && (
+                          <p className='tw-absolute tw-text-red-500 -tw-top-4 tw-right-0 tw-m-0 tw-text-xs'>
+                            {formikFam.errors.tmpt_lahir}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                    <div className='form-group mb-2'>
+                      <label
+                        htmlFor='exampleInputEmail2'
+                        className='tw-form-label tw-text-sm tw-font-bold tw-inline-block tw-mb-2 tw-text-gray-700'
+                      >
+                        Birthday
+                      </label>
+                      <div className='tw-relative'>
+                        <input
+                          onChange={formikFam.handleChange}
+                          value={formikFam.values.tgllahir}
+                          type='date'
+                          className={`${formikFam.touched.tgllahir && formikFam.errors.tgllahir
+                            ? `tw-border-red-500`
+                            : `tw-border-gray-300`
+                            } tw-form-control tw-block tw-w-full tw-px-3 tw-py-2 tw-text-sm tw-font-normal  tw-text-gray-700 tw-bg-white tw-bg-clip-padding tw-border tw-border-solid tw-rounded tw-transition tw-ease-in-out tw-m-0 focus:tw-text-gray-700 focus:tw-bg-white focus:tw-border-sky-600 focus:tw-outline-none`}
+                          id='tgllahir'
+                          placeholder='Birthday'
+                        />
+                        {formikFam.touched.tgllahir && formikFam.errors.tgllahir && (
+                          <p className='tw-absolute tw-text-red-500 -tw-top-4 tw-right-0 tw-m-0 tw-text-xs'>
+                            {formikFam.errors.tgllahir}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                    {/* addbtn */}
+                    <div className="tw-relative">
+                      <button
+                        onClick={formikFam.handleSubmit}
+                        type='button'
+                        className='tw-text-[#66B6FF] tw-text-sm tw-font-medium'
+                      >
+                        + Add new family member 
+                      </button>
+                    </div>
+                    {formik.values.empchild.length > 0 && (
+                      <div className=' tw-mt-2 tw-px-6 tw-overflow-x-auto'>
+                        <table className='tw-max-w-[735px]'>
+                          <thead className='tw-bg-white tw-border-b-2 tw-border-t'>
+                            <tr>
+                              <th
+                                scope='tw-col'
+                                className='tw-text-sm tw-font-medium tw-text-gray-900 tw-px-6 tw-py-2 tw-text-left'
+                              >
+                                #
+                              </th>
+                              <th
+                                scope='tw-col'
+                                className='tw-text-sm tw-font-medium tw-text-gray-900 tw-px-6 tw-py-2 tw-text-left'
+                              >
+                                Child Name
+                              </th>
+                              <th
+                                scope='tw-col'
+                                className='tw-text-sm tw-font-medium tw-text-gray-900 tw-px-6 tw-py-2 tw-text-left'
+                              >
+                                Gender
+                              </th>
+                              <th
+                                scope='tw-col'
+                                className='tw-text-sm tw-font-medium tw-text-gray-900 tw-px-6 tw-py-2 tw-text-left'
+                              >
+                                Birthplace
+                              </th>
+                              <th
+                                scope='tw-col'
+                                className='tw-text-sm tw-font-medium tw-text-gray-900 tw-px-6 tw-py-2 tw-text-left'
+                              >
+                                Birthday
+                              </th>
+                              <th
+                                scope='tw-col'
+                                className='tw-text-sm tw-font-medium tw-text-gray-900 tw-px-6 tw-py-2 tw-text-left'
+                              >
+                                Action
+                              </th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {formik.values.empchild.map((i, idx) => {
+                              console.log(i);
+                              return (
+                                <tr
+                                  key={idx}
+                                  className='tw-border-b hover:tw-bg-sky-100'
+                                >
+                                  <td className='tw-text-sm tw-text-gray-900 tw-font-light tw-px-6 tw-py-2 tw-whitespace-wrap tw-w-12'>
+                                    {idx + 1}
+                                  </td>
+                                  <td className='tw-text-sm tw-text-gray-900 tw-font-light tw-px-6 tw-py-2 tw-whitespace-wrap tw-w-1/3'>
+                                    {i.name_child}
+                                  </td>
+                                  <td className='tw-text-sm tw-text-gray-900 tw-font-light tw-px-6 tw-py-2 tw-whitespace-wrap tw-w-1/3'>
+                                    {i.jenis_kelamin}
+                                  </td>
+                                  <td className='tw-text-sm tw-text-gray-900 tw-font-light tw-px-6 tw-py-2 tw-whitespace-wrap tw-w-1/3'>
+                                    {i.tmpt_lahir}
+                                  </td>
+                                  <td className='tw-text-sm tw-text-gray-900 tw-font-light tw-px-6 tw-py-2 tw-whitespace-wrap tw-w-1/3'>
+                                    {i.tgllahir}
+                                  </td>
+                                  <td className='tw-text-sm tw-text-gray-900 tw-font-light tw-px-6 tw-py-2 tw-whitespace-wrap'>
+                                    <button
+                                      onClick={e => {
+                                        e.preventDefault()
+                                        removeFam(idx)
+                                      }}
+                                      className='hover:tw-text-gray-700 tw-text-gray-500 tw-transition tw-duration-300 tw-ease-in-out'
+                                    >
+                                      <MdDelete size={18} />
+                                    </button>
+                                  </td>
+                                </tr>
+                              )
+                            })}
+                          </tbody>
+                        </table>
+                      </div>
+                    )}
+                </TabPanel>
               </form>
             </div>
             <div className='modal-footer tw-relative tw-flex tw-flex-shrink-0 tw-flex-wrap tw-items-center tw-justify-end tw-py-2 tw-px-6 tw-border-t tw-border-gray-200 tw-rounded-b-md'>
@@ -1048,13 +1636,11 @@ const ModalTambah = ({ token }) => {
                 </p>
               }
               <button
+                type='button'
                 onClick={() => {
                   formik.resetForm({ values: '' })
-                  formikEdu.resetForm({ values: '' })
-                  formikCert.resetForm({ values: '' })
                 }}
-                type='button'
-                className='hover:tw-bg-red-600 tw-inline-block tw-px-6 tw-py-2 tw-bg-red-500 tw-text-white tw-font-bold tw-text-xs tw-rounded tw-duration-150 tw-ease-in-out'
+                className='tw-text-sm tw-text-[#9A9A9A] tw-font-semibold'
                 data-bs-dismiss='modal'
               >
                 Cancel
@@ -1062,16 +1648,14 @@ const ModalTambah = ({ token }) => {
               <button
                 onClick={formik.handleSubmit}
                 type='button'
-                className='hover:tw-bg-red-600 tw-flex tw-items-center tw-px-6 tw-py-2 tw-bg-red-500 tw-text-white tw-font-bold tw-text-xs tw-rounded tw-duration-150 tw-ease-in-out'
+                className='modal_add_button' 
               >
-                {isLoading && (
-                  <div
-                    className='spinner-border animate-spin tw-inline-block tw-w-4 tw-h-4 tw-border-2 tw-rounded-full tw-mr-2'
-                    role='status'
-                  >
-                    <span className='tw-visually-hidden'>Loading...</span>
+                {
+                  isLoading &&
+                  <div className="spinner-border animate-spin tw-inline-block tw-w-4 tw-h-4 tw-border-2 tw-rounded-full tw-mr-2" role="status">
+                    <span className="tw-visually-hidden">Loading...</span>
                   </div>
-                )}
+                }
                 Save
               </button>
             </div>

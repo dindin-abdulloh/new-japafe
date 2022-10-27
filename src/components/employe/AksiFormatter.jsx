@@ -1,5 +1,6 @@
 import React from 'react'
-import { MdDescription, MdCreate, MdDelete } from 'react-icons/md'
+import { MdRemoveRedEye, MdOutlineEditNote, MdDelete } from 'react-icons/md'
+import '../css/aksiFormatter.css'
 
 const AksiFormatter = ({ row, showModalHandler }) => {
   return (
@@ -9,23 +10,23 @@ const AksiFormatter = ({ row, showModalHandler }) => {
           onClick={() => {
             showModalHandler('detail', row)
           }}
-          className='hover:tw-text-gray-700 tw-text-gray-500 tw-transition tw-duration-300 tw-ease-in-out'
+          className='is_view_btn'
         >
-          <MdDescription size={18} />
+          <MdRemoveRedEye size={18} />
         </button>
         <button
           onClick={() => {
             showModalHandler('edit', row)
           }}
-          className='hover:tw-text-gray-700 tw-text-gray-500 tw-transition tw-duration-300 tw-ease-in-out'
+          className='is_edit_btn'
         >
-          <MdCreate size={18} />
+          <MdOutlineEditNote size={18} />
         </button>
         <button
           onClick={() => {
             showModalHandler('remove', row)
           }}
-          className='hover:tw-text-gray-700 tw-text-gray-500 tw-transition tw-duration-300 tw-ease-in-out'
+          className='is_delete_btn'
         >
           <MdDelete size={18} />
         </button>

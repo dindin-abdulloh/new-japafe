@@ -1,4 +1,5 @@
 import { configureStore, combineReducers } from '@reduxjs/toolkit'
+import generalSlice from './slices/generalSlice'
 import authSlice from './slices/authSlice'
 import customerSlice from './slices/customerSlice'
 import supplierSlice from './slices/supplierSlice'
@@ -7,7 +8,9 @@ import quotationSlice from './slices/quotationSlice'
 import equipmentPartSlice from './slices/equipmentPartSlice'
 import workOrderReleaseSlice from './slices/workOrderReleaseSlice'
 
+
 const reducer = combineReducers({
+  generalSlice,
   authSlice,
   customerSlice,
   supplierSlice,

@@ -11,7 +11,6 @@ export const getEmployees = createAsyncThunk(
     const results = await axios.get(`employe?limit=${perPage}&page=${page}`, {
       headers: headers
     })
-    console.log('jalan')
     return results.data
   }
 )
@@ -20,10 +19,10 @@ export const addEmployee = createAsyncThunk(
   'employeeSlice/addEmployee',
   async ({ data = null, token = '' }) => {
     const formData = new FormData()
-    formData.append('NIP', data.NIP)
+    formData.append('nik', data.nik)
     formData.append('nickname', data.nickname)
     formData.append('nama_karyawan', data.nama_karyawan)
-    formData.append('departement', data.departement)
+    formData.append('departement_id', data.departement_id)
     formData.append('email', data.email)
     formData.append('alamat', data.alamat)
     formData.append('phone', data.phone)
@@ -36,13 +35,21 @@ export const addEmployee = createAsyncThunk(
     formData.append('kota', data.kota)
     formData.append('starjoin', data.starjoin)
     formData.append('sisa_cuti', data.sisa_cuti)
+    formData.append('spouse_name', data.spouse_name)
+    formData.append('jenis_kelamin_spouse', data.jenis_kelamin_spouse)
+    formData.append('tmpt_lahir_spouse', data.tmpt_lahir_spouse)
+    formData.append('tgllahir_spouse', data.tgllahir_spouse)
+    formData.append('provinsi', data.provinsi)
+    formData.append('kecamatan', data.kecamatan)
+    formData.append('kelurahan', data.kelurahan)
+    formData.append('kodepos', data.kodepos)
     formData.append('emppen', JSON.stringify(data.emppen))
     formData.append('emppel', JSON.stringify(data.emppel))
-
+    formData.append('empchild', JSON.stringify(data.empchild))
+    
     data.emppel.forEach(item => {
       formData.append('upload', item.upload)
     })
-
     const headers = {
       'Content-Type': 'application/json',
       Authorization: 'Bearer ' + token
@@ -61,10 +68,10 @@ export const editEmployee = createAsyncThunk(
     }
     const {
       id,
-      nip,
+      nik,
       nickname,
       nama_karyawan,
-      departement,
+      departement_id,
       email,
       tmptlahir,
       tgllahir,
@@ -74,15 +81,21 @@ export const editEmployee = createAsyncThunk(
       status,
       kota,
       starjoin,
-      endjoin
+      endjoin,
+      spouse_name,
+      tmpt_lahir_spouse,
+      tgllahir_spouse,
+      emppen,
+      emppel,
+      empchild
     } = data
     const results = await axios.put(
       `employe/${id}`,
       {
-        nip,
+        nik,
         nickname,
         nama_karyawan,
-        departement,
+        departement_id,
         email,
         tmptlahir,
         tgllahir,
@@ -92,7 +105,13 @@ export const editEmployee = createAsyncThunk(
         status,
         kota,
         starjoin,
-        endjoin
+        endjoin,
+        spouse_name,
+        tmpt_lahir_spouse,
+        tgllahir_spouse,
+        emppen,
+        emppel,
+        empchild
       },
       { headers: headers }
     )
